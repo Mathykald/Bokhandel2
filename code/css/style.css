@@ -1,0 +1,77 @@
+* {
+	
+}
+
+#wholeting {
+	background-color: #ffa545;
+	padding-left: 500px;
+}
+
+#center {
+	padding-top: 40px;
+}
+
+#padmar {
+    padding: 10px;
+    margin: px;
+    background-color: lightblue;
+}
+
+.colorwhite {
+    color: black !important;
+}
+
+.bkclr {
+    background-color: ;
+    padding: 0px;
+    margin: 0px;
+}
+
+input {
+	border-radius: 10px;
+	border: 1px white solid;
+}
+
+#submit {
+	background-color: lightblue;
+	height: 40px;
+	width: 100px;
+	font-size: 20px;
+	margin-bottom: 50px;
+}
+
+#footer {
+	background-color: lightblue;
+}
+
+#cimage {
+	border: 0px;
+	background-color: lightblue;
+}
+
+#yes {
+	text-align: center;
+	padding-bottom: 50px;
+}
+
+.bc {
+	background-color: lightpink;
+	
+}
+
+#maregin{
+	margin-top: 50px;
+	max-width: 350px;
+}
+
+#padb {
+	padding-bottom: 50px;
+}
+
+#marginsinglecar{
+	margin-right: 50px;
+}
+
+#bksomelese{
+	box-shadow: rgba(2, 2, 2, 0.2) 0px 7px 29px 0px;
+}

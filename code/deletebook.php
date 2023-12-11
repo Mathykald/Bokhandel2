@@ -12,7 +12,7 @@
 		}
 		
 		else {
-			$errorMessage = "No car selected";
+			$errorMessage = "No book selected";
 		}
 		
 

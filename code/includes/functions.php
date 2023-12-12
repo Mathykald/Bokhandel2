@@ -47,5 +47,46 @@ function fetchAuthors($conn){
 	return $selectedAuthors;
 }
 
+function fetchCategories($conn){
+	$selectedCategories = $conn->query("SELECT * FROM category_table");
+	return $selectedCategories;
+}
+
+function fetchillustrators($conn){
+	$selectedIllustrators = $conn->query("SELECT * FROM illustrator_table");
+	return $selectedIllustrators;
+}
+
+function selectAllBooks($conn){
+	$allBooks = $conn->query("SELECT * FROM book_table");
+	return $allBooks;
+}
+
+function selectBooks($conn, $amount){
+	$selectedBooks = $conn->prepare(
+	'SELECT *
+	FROM book_table
+	INNER JOIN agerec_table
+	ON book_table.book_agerec_fk = agerec_table.agerec_id 
+	INNER JOIN author_table
+	ON book_table.book_author_fk = author_table.author_id 
+	INNER JOIN lang_table
+	ON book_table.book_lang_fk = lang_table.lang_id
+	INNER JOIN publish_table
+	ON book_table.book_publish_fk = publish_table.publish_id
+	INNER JOIN category_table
+	ON book_table.book_category_fk = category_table.category_id
+	INNER JOIN genre_table
+	ON book_table.book_genre_fk = genre_table.genre_id 
+	WHERE book_status_fk = 1
+	LIMIT :amount'
+	);
+	$selectedBooks->bindParam(':amount', $amount, PDO::PARAM_INT);
+	$selectedBooks->execute();
+	return $selectedBooks;
+}
+
+
+
 
 ?>

@@ -2,3 +2,21 @@
 #submit {
 	background-color: black;
 }
+
+#padmar {
+	background-image: url('uploads/old-books-436498_1280.jpg');
+	padding: 50px;
+	opacity: 75%;
+}
+
+.color {
+	color: white;
+}
+
+.nav-link {
+	color: white !important;
+}
+
+.navbar-brand {
+	color: white !important;
+}

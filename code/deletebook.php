@@ -4,6 +4,7 @@
 	include 'includes/config.php';
 	include 'includes/functions.php';
 	include 'includes/fileuppload.php';
+	include 'header.php';
 	
 	$errorMessage = "";
 	if(isset($_GET['carID'])){

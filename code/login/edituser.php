@@ -18,7 +18,7 @@ else {
 	$chosenUserToEdit = $_SESSION['uid'];
 }
 //Hämta ut all info från roles-tabellen
-$stmt_selectRolesInfo = $pdo->query("SELECT * FROM table_roles");
+$stmt_selectRolesInfo = $pdo->query("SELECT * FROM role_tables");
 
 //Kolla ifall användaren har tryckt på uppdatera-knappen
 if(isset($_POST['user-update-submit'])){

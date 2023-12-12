@@ -59,8 +59,8 @@ if(isset($_POST['submit_role_status'])){
 
 
 $userInfo = $user->getUserInfo($userToEdit);
-$roleInfo = $pdo->query("SELECT * FROM table_roles");
-$statusInfo = $pdo->query("SELECT * FROM table_status");
+$roleInfo = $pdo->query("SELECT * FROM role_tables");
+$statusInfo = $pdo->query("SELECT * FROM user_status_table");
 
 
 ?>

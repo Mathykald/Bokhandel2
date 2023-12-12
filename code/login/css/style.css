@@ -15,37 +15,9 @@ h1, h2, h3 {
 	font-family: 'Comic Sans MS';
 }
 
-#header {
-	width: 100%;
-	height: 200px;
-	background: #ffae00;
-}
 
-#navigation {
-	width: 100%;
-	background: #0f0f0f;
-	padding-left: 30px;
-}
 
-#navigation a, #footer p {
-	text-align: center;
-}
 
-#navigation a {
-	color: #fff;
-	line-height: 40px;
-}
-
-#content {
-	padding: 20px;
-	width: 100%;
-}
-
-#footer {
-	width: 100%;
-	height: 40px;
-	background: #000;
-}
 
 .content-inner{
 	width: 991px;

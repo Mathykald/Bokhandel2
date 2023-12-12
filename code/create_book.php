@@ -12,17 +12,10 @@ include 'header.php';
   if(isset($_POST['article-submit'])){
 	  
 	 $lastInsertedAuthorId = createAuthor($conn, $_POST['author_firstname'], $_POST['author_lastname']);
-
-
-	  
-	 
-	  
-	  
 	  
 	  
 	 // echo $_post['firstname'];
 	 // echo $files['cimage'] ['name'];
-	 
 	 
   }
   ?>

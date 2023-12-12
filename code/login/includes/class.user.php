@@ -23,7 +23,7 @@ class user {
 		if(isset($_POST['submit_register'])){
 			$cleanname = $this->cleanInput($_POST['username']);
 			//Bygg query som hämtar ut en rad ur databasen ifall användarnamnet finns
-			$stmt_checkIfUserExists = $this->conn->prepare("SELECT * FROM table_user WHERE u_username = :uname OR u_email = :email");
+			$stmt_checkIfUserExists = $this->conn->prepare("SELECT * FROM user_table WHERE u_username = :uname OR u_email = :email");
 			$stmt_checkIfUserExists->bindValue(":uname", $cleanname, PDO::PARAM_STR);
 			$stmt_checkIfUserExists->bindValue(":email", $cleanemail, PDO::PARAM_STR);
 			$stmt_checkIfUserExists->execute();
@@ -83,7 +83,7 @@ class user {
 			//Encrypt password with the password_hash-function
 			$encryptedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
 			
-			$stmt_registerUser = $this->conn->prepare("INSERT INTO table_user 
+			$stmt_registerUser = $this->conn->prepare("INSERT INTO user_table 
 			(u_username, u_firstname, u_lastname, u_email, u_password, u_role, u_status) 
 			VALUES (:uname, :ufirst, :ulast, :umail, :upass, 1, 1)");
 			$stmt_registerUser->bindValue(":uname", $cleanName, PDO::PARAM_STR);
@@ -104,7 +104,7 @@ class user {
 		public function login(){
 			$usernameEmail = $this->cleanInput($_POST['username']);
 			//Bygg query som hämtar ut en rad ur databasen ifall användarnamnet finns
-			$stmt_checkIfUserExists = $this->conn->prepare("SELECT * FROM table_user WHERE u_username = :uname OR u_email = :email");
+			$stmt_checkIfUserExists = $this->conn->prepare("SELECT * FROM user_table WHERE u_username = :uname OR u_email = :email");
 			$stmt_checkIfUserExists->bindValue(":uname", $usernameEmail, PDO::PARAM_STR);
 			$stmt_checkIfUserExists->bindValue(":email", $usernameEmail, PDO::PARAM_STR);
 			$stmt_checkIfUserExists->execute();
@@ -141,7 +141,7 @@ class user {
 		}
 		
 		public function checkUserRole($req){
-			$stmt_checkRoleLevel = $this->conn->prepare("SELECT * FROM table_roles WHERE r_ID = :urole");
+			$stmt_checkRoleLevel = $this->conn->prepare("SELECT * FROM role_table WHERE r_ID = :urole");
 			$stmt_checkRoleLevel->bindValue(":urole", $_SESSION['urole'], PDO::PARAM_STR);
 			$stmt_checkRoleLevel->execute();
 			$currentUserRoleInfo = $stmt_checkRoleLevel->fetch();
@@ -174,7 +174,7 @@ class user {
 			
 			if(isset($_POST['password']) && $_POST['password'] != ""){
 				$encryptedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
-				$editUserInfo = $this->conn->prepare("UPDATE table_user SET u_email = :uemail, u_firstname = :ufname, u_lastname = :ulname, u_password = :upass WHERE u_ID = :uid");
+				$editUserInfo = $this->conn->prepare("UPDATE user_table SET u_email = :uemail, u_firstname = :ufname, u_lastname = :ulname, u_password = :upass WHERE u_ID = :uid");
 				$editUserInfo->bindParam(":uemail", $cleanEmail, PDO::PARAM_STR);
 				$editUserInfo->bindParam(":ufname", $cleanFname, PDO::PARAM_STR);
 				$editUserInfo->bindParam(":ulname", $cleanLname, PDO::PARAM_STR);
@@ -183,7 +183,7 @@ class user {
 			}
 			
 			else{
-				$editUserInfo = $this->conn->prepare("UPDATE table_user SET u_email = :uemail, u_firstname = :ufname, u_lastname = :ulname WHERE u_ID = :uid");
+				$editUserInfo = $this->conn->prepare("UPDATE user_table SET u_email = :uemail, u_firstname = :ufname, u_lastname = :ulname WHERE u_ID = :uid");
 				$editUserInfo->bindParam(":uemail", $cleanEmail, PDO::PARAM_STR);
 				$editUserInfo->bindParam(":ufname", $cleanFname, PDO::PARAM_STR);
 				$editUserInfo->bindParam(":ulname", $cleanLname, PDO::PARAM_STR);
@@ -198,7 +198,7 @@ class user {
 		}
 			
 		public function getUserInfo($uid){
-			$userInfoQuery = $this->conn->prepare("SELECT * FROM table_user WHERE u_ID = :uid");
+			$userInfoQuery = $this->conn->prepare("SELECT * FROM user_table WHERE u_ID = :uid");
 			$userInfoQuery->bindParam(":uid", $uid, PDO::PARAM_INT);
 			$userInfoQuery->execute();
 			$userInfo = $userInfoQuery->fetch();
@@ -208,14 +208,14 @@ class user {
 		public function searchUsers(){
 			$cleanSearchParam = $this->cleanInput($_POST['search_username']);
 			$cleanSearchParam = "%".$cleanSearchParam."%";
-			$searchUsersQuery = $this->conn->prepare("SELECT * FROM table_user WHERE u_username LIKE :searchParam");
+			$searchUsersQuery = $this->conn->prepare("SELECT * FROM user_table WHERE u_username LIKE :searchParam");
 			$searchUsersQuery->bindParam(":searchParam", $cleanSearchParam, PDO::PARAM_STR);
 			$searchUsersQuery->execute();
 			return $searchUsersQuery;			
 		}
 
 		public function updateUserStatus($uid){
-				$updateStatusQuery = $this->conn->prepare("UPDATE table_user SET u_status = :status WHERE u_ID = :uid");
+				$updateStatusQuery = $this->conn->prepare("UPDATE user_table SET u_status = :status WHERE u_ID = :uid");
 				$updateStatusQuery->bindParam(":status", $_POST['update_status'], PDO::PARAM_INT);
 				$updateStatusQuery->bindParam(":uid", $uid, PDO::PARAM_INT);
 				if($updateStatusQuery->execute()){
@@ -228,7 +228,7 @@ class user {
 		}
 				
 		public function updateUserRole($uid){
-				$updateRoleQuery = $this->conn->prepare("UPDATE table_user SET u_role = :role WHERE u_ID = :uid");
+				$updateRoleQuery = $this->conn->prepare("UPDATE user_table SET u_role = :role WHERE u_ID = :uid");
 				$updateRoleQuery->bindParam(":role", $_POST['update_role'], PDO::PARAM_INT);
 				$updateRoleQuery->bindParam(":uid", $uid, PDO::PARAM_INT);
 				if($updateRoleQuery->execute()){
@@ -241,7 +241,7 @@ class user {
 				
 		}
 		public function deleteUser($uid){
-				$deleteUserQuery = $this->conn->prepare("DELETE FROM table_user WHERE u_ID = :uid");
+				$deleteUserQuery = $this->conn->prepare("DELETE FROM user_table WHERE u_ID = :uid");
 				$deleteUserQuery->bindParam(":uid", $uid, PDO::PARAM_INT);
 				if($deleteUserQuery->execute()){
 					return "success";

@@ -31,10 +31,7 @@
 				  <input type="submit" name="submit_login" class="fadeIn fourth" value="Log In">
 				</form>
 
-				<!-- Remind Passowrd -->
-				<div id="formFooter">
-				  <span>Not a user? </span><a class="underlineHover" href="register.php">Register here!</a>
-				</div>
+
 
 			</div>
 		</div>

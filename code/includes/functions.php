@@ -58,7 +58,7 @@ function fetchillustrators($conn){
 }
 
 function selectAllBooks($conn){
-	$allBooks = $conn->query("SELECT * FROM book_table");
+	$allBooks = $conn->query("SELECT DISTINCT book_genre_fk FROM book_table");
 	return $allBooks;
 }
 

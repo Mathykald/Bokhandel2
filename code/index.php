@@ -15,7 +15,7 @@ if(isset($_GET['sortprice']) && $_GET['sortprice'] != 0){
 }
 
 else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
-	$sortCriteria = 'car_pages';
+	$sortCriteria = 'book_pages';
 	$sortDirection = cleanInput($_GET['sortpages']);
 	$selectedBooks = selectSortedBooks($conn, 20, $sortCriteria, $sortDirection);
 }

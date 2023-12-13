@@ -1,6 +1,9 @@
+* {
+	text-align: center;
+}
 
 #submit {
-	background-color: black;
+	
 }
 
 #padmar {
@@ -9,14 +12,17 @@
 	opacity: 75%;
 }
 
-.color {
-	color: white;
-}
-
 .nav-link {
 	color: white !important;
 }
 
 .navbar-brand {
 	color: white !important;
+}
+
+#description
+{
+	width: 400px;
+    height: 100px;
+    font-size:14pt;
 }

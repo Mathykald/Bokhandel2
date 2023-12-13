@@ -12,7 +12,7 @@ if(isset($_POST['create-author'])){
       
        
       // echo $_post['firstname'];
-      // echo $files['cimage'] ['name'];      
+      // echo $files['bimage'] ['name'];      
    }
 ?>
 <form method="post" action="" enctype="multipart/form-data">

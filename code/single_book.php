@@ -3,6 +3,7 @@
 include 'header.php';
 include 'includes/functions.php';
 include 'includes/config.php';
+
 ?>
 <div class="bc">
 <?php
@@ -11,87 +12,83 @@ $errorMessage = "";
 
 
 
-if(isset($_GET['carID'])){
+if(isset($_GET['bookID'])){
 
-$currentCar = $_GET['carID'];
+$currentBook = $_GET['bookID'];
 
-$carData = selectSingleCar($conn,$currentCar);
-
-
-
+$bookData = selectSingleBook($conn,$currentBook);
 }
 
 else{
-
-    $errorMessage = "No car has been chosen.";
-
+    $errorMessage = "No book has been chosen.";
 }
 
-
-
-
 ?>
-
-
-
 <p class="error-message m-0">
-
 <?php
-
 if($errorMessage != ""){
 
-    echo $errorMessage;
+  echo $errorMessage;
 
-    }
-	
+  }
+
 echo "</p>";
-	
+
 echo "<div id='yes'>";
-echo "<h1 class='pt-3'>{$carData['car_Brand']}</h1>";
-	echo "<img src='uploads/{$carData['car_Img']}' id='maregin' class='' alt'...'>. '<br>'";
+
 echo"</div>";
 echo"<div class='pb-5 marginsinglecar'>";
-echo"<table id='padb' class='table table-dark'>
-  <thead>
-    <tr>
-      <th scope='col'>Brand</th>
-      <th scope='col'>Model</th>
-      <th scope='col'>Yearmodel</th>
-      <th scope='col'>Price</th>
-      <th scope='col'>Milage</th>
-      <th scope='col'>Licensnumber</th>
-      <th scope='col'>Engine</th>
-      <th scope='col'>transmission type</th>
-      <th scope='col'>Horsepower</th>
-      <th scope='col'>Fuel consumtion</th>
-      <th scope='col'>created</th>
-	  <th scope='col'>name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>{$carData['car_Brand']}</th>
-      <td>{$carData['car_Model']}</td>
-      <td>{$carData['car_Year_model']}</td>
-      <td>{$carData['car_Price']}€</td>
-      <td>{$carData['car_Milage']}km</td>
-      <td>{$carData['car_Licens_number']}</td>
-      <td>{$carData['car_Engine']}l</td>
-      <td>{$carData['transmission_name']}</td>
-      <td>{$carData['car_Horsepower']}hp</td>
-      <td>{$carData['car_Fuel_consumtion']}</td>
-      <td>{$carData['car_created']}</td>
-      <td>{$carData['First_name']}</td>
-	  
-    </tr>
-  </tbody>
-</table>";
-echo"</div>";
+echo "<div class='container'>;
+		<div class='row mb-5'>
+			<div class='col-md-4'>
+				<div class='card'>
+					<img src='' class='card-img-top' alt=''...''>
+					<div class='card-body'>
+						<h5 class='card-title'>{$bookData['book_title']}</h5>
+						<p class='card-text'>{$bookData['book_description']}.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>";
 
-
-?>
+  echo"</div>";
+  
+  echo "</div>";
+  
 
 
 
-</div>
+
+
+  echo "<div class='container'>
+			<div class='col-md-12'>
+				<div class='card mb-3'>
+					<div class='row no-gutters align-items-center'>
+						<div class='col-md-4'>
+             <img src='uploads/{$bookData['book_img']}' id='maregin' class='' alt'...'>. '<br>';
+						</div>
+						<div class='col-md-8'>
+							<div class='card-body'>
+                <h5 class='card-title'>{$bookData['book_title']}</h5>
+					    	<p class='card-text'>{$bookData['book_description']}.</p>
+                <p class='card-text'>Åldersrekommendation: {$bookData['agerec_age']}</small></p>
+                <p class='card-text'>Författare: {$bookData['author_firstname']}</small></p>
+                <p class='card-text'>illustratör: {$bookData['illustrator_firstname']}</small></p>
+                <p class='card-text'>Språk: {$bookData['lang_language']}</small></p>
+                <p class='card-text'>Genre: {$bookData['genre_name']}</small></p>
+								<p class='card-text'>Kategori: {$bookData['category_name']}</small></p>
+                <p class='card-text'>Förlag: {$bookData['publish_name']}/5</small></p>
+                <p class='card-text'>Rating: {$bookData['book_rating']}/5</small></p>
+                <p class='card-text'>Status: {$bookData['status_name']}</small></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- row -->
+	</div>";
+  ?>
+
 <?php include 'footer.php' ?>

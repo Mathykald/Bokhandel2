@@ -162,7 +162,6 @@ include 'header.php';
 
 </p>
 <select name="status_name" class="status_name">
-  <option value="">Välj bok status</option>
   <option value="1">Finns i lager</option>
   <option value="2">Finns inte i lager</option>
 

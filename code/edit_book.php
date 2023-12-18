@@ -30,8 +30,8 @@ else{
 	 //laga dom i rätt ordning som formen klart.
 	 $a = updateBook($conn, $_GET['bookID'], $_POST['title'], $_POST['price'], $_POST['rating'], $_POST['author'], 
 	 $_POST['illustrator'], $_POST['description'], $_POST['genre'], $_POST['pages'], 
-	 $_FILES['bimage']['name'], $_POST['language'], 
-	 $_POST['agerec'], $_POST['publish'], $_POST['category'], $_POST['release_date'], $_POST['status_name']);	
+	 $_FILES['bimage']['name'], $_POST['book_language'], 
+	 $_POST['book_agerec'], $_POST['book_publish'], $_POST['book_category'], $_POST['release_date'], $_POST['status_name']);	
 	 var_dump($a);
 	header("Refresh:1");
 	
@@ -103,7 +103,7 @@ else{
   <input class="colorstuff" type="" id="pages" value="<?php if(isset($bookData['book_pages'])){echo $bookData['book_pages'];} ?>" name="pages"><br><br>
   
   <label for="bimage">Pärmbild:</label><br>
-  <input class="colorstuff" type="" id="bimage" value="<?php if(isset($bookData['book_img'])){echo $bookData['book_img'];} ?>" name="bimage"><br><br>
+  <input class="colorstuff" type="file" id="bimage" value="<?php if(isset($bookData['book_img'])){echo $bookData['book_img'];} ?>" name="bimage"><br><br>
 
   <label for="book_language">Välj språk</label><br>
   <input class="colorstuff" type="" id="book_language" value="<?php if(isset($bookData['lang_language'])){echo $bookData['lang_language'];} ?>" name="book_language"><br><br>
@@ -165,8 +165,10 @@ else{
   <option value="2">Finns inte i lager</option>
 
 </select> 
-	
-  <input id="submit" type="submit" name="article-updated" value="Uppdate"><br>
+
+<input id="submit" type="submit" name="article-updated" value="Uppdate"><br>
+
+
 
 
 
@@ -175,4 +177,7 @@ else{
 </div>
 </div>
 </div>
+
+
+
 

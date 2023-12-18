@@ -87,9 +87,6 @@ input {
 	max-width: 350px;
 }
 
-#padb {
-
-}
 
 #marginsinglecar{
 	margin-right: 50px;
@@ -101,4 +98,9 @@ input {
 
 #formcss {
 	background-color: #7d664b;
+}
+
+#content {
+	background-color:#7d664b
+	
 }

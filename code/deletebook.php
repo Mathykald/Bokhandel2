@@ -4,12 +4,12 @@
 	include 'includes/config.php';
 	include 'includes/functions.php';
 	include 'includes/fileuppload.php';
-	include 'header.php';
+
 	
 	$errorMessage = "";
-	if(isset($_GET['carID'])){
-		$currentCar = $_GET['carID'];
-		$carData = selectSingleCar($conn,$currentCar);
+	if(isset($_GET['bookID'])){
+		$currentBook = $_GET['bookID'];
+		$bookData = selectSingleBook($conn,$currentBook);
 		}
 		
 		else {
@@ -18,9 +18,9 @@
 		
 
 		
-		if(isset($_POST['deletecar'])){ 
-		if(deleteCar($conn, $currentCar)){
-		header('Location: index.php?carDeleted=1'); 
+		if(isset($_POST['deletebook'])){ 
+		if(deleteBook($conn, $currentBook)){
+		header('Location: index.php?bookDeleted=1'); 
 		}}
 		
 		
@@ -29,10 +29,10 @@
 ?>
 <div class="bc">
 <?php
-echo "Do you want to delete " . $carData['car_Brand'] . "  " . $carData['car_Model'] . "?";
+echo "Vill du ta bort " . $bookData['book_title'] . " av " . $bookData['author_firstname'] . "?";
 ?>
 
-<form method="POST" action="">    <input type="submit" name="deletecar" value="Delete">    <input type="submit" name="goback" value="Go back"></form>
+<form method="POST" action="">    <input type="submit" name="deletebook" value="Ta bort">    <input type="submit" name="goback" value="Tillbaka"></form>
 
 
 </div>

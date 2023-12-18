@@ -36,7 +36,7 @@ else {
 		<h5 class'card-title'>{$row['book_title']}</h5>
 			<p class='card-text'><p>
 		</div>
-			<p>Beskrivning</p>
+			<p>{$row['book_description']}</p>
 			 <a href='single_Book.php?bookID={$row['book_id']}'>View full info</a> <a href='edit_book.php?bookID={$row['book_id']}'>Edit book info</a>
 			 <a href='deletebook.php?bookID={$row['book_id']}'>Delete book</a>
 		</div>

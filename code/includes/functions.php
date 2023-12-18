@@ -59,6 +59,54 @@ if (!function_exists('createBook')) {
 		$stmt_insertBook->execute();
 	}
 }
+
+if (!function_exists('createBook')) {
+function updateBook($conn, $bid, $book_title, $book_price, 
+$book_rating, $book_author, $book_illustrator, $book_description, 
+$book_genre, $book_pages, $book_img, $book_language, $book_agerec, 
+$book_publish, $book_category, $release_date, $status_name ){
+		
+	$stmt_insertBook = $conn->prepare("UPDATE book_table SET 
+    book_title = :book_title, 
+    book_price = :book_price, 
+    book_rating = :book_rating, 
+    book_author_fk = :book_author, 
+    book_illustrator_fk = :book_illustrator, 
+    book_description = :book_description, 
+    book_genre_fk = :book_genre, 
+    book_pages = :book_pages, 
+    book_img = :book_img, 
+    book_lang_fk = :book_language, 
+    book_agerec_fk = :book_agerec, 
+    book_publish_fk = :book_publish, 
+    book_category_fk = :book_category,  -- Added missing '=' here
+    release_date = :release_date, 
+    book_status_fk = :status_name 
+    WHERE book_id = :bid");
+
+	$stmt_insertBook->bindParam(':bid', $bid, PDO::PARAM_INT);
+	$stmt_insertBook->bindParam(':book_title', $book_title, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_price', $book_price, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_rating', $book_rating, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_author', $book_author, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_illustrator', $book_illustrator, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_description', $book_description, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_genre', $book_genre, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_pages', $book_pages, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_img', $book_img, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_language', $book_language, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_agerec', $book_agerec, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_publish', $book_publish, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':book_category', $book_category, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':release_date', $release_date, PDO::PARAM_STR);
+	$stmt_insertBook->bindParam(':status_name', $status_name, PDO::PARAM_STR);
+	$stmt_insertBook->execute();
+
+	return $cid;
+
+}
+}
+
 if (!function_exists('createIllustrator')) {
 	function createIllustrator($conn, $illustrator_firstname, $illustrator_lastname ){
 	
@@ -163,8 +211,8 @@ if (!function_exists('selectBooks')) {
 	}
 }
 
-if (!function_exists('selectBookCar')) {
-	function selectBookCar($conn, $id){
+if (!function_exists('selectBookbook')) {
+	function selectBookbook($conn, $id){
 		$selectedBook = $conn->prepare(
 		'SELECT *
 		FROM book_table
@@ -180,6 +228,15 @@ if (!function_exists('selectBookCar')) {
 		
 		return $bookData;
 	}
+}
+
+if (!function_exists('deleteBook')) {
+function deleteBook($conn, $book){
+	$deleteBookQuery = $conn->prepare("UPDATE book_table SET book_status_fk = 3 WHERE book_id = :bid");
+	$deleteBookQuery->bindParam(':bid', $book, PDO::PARAM_INT);
+	$deleteBookQuery->execute();
+	return true;
+}
 }
 
 if (!function_exists('selectSingleBook')) {

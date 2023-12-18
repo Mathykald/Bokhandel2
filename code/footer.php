@@ -31,11 +31,6 @@
         <h5 class="text-uppercase">Sociala medier</h5>
 
         <ul class="list-unstyled">
-          <li>
-            
-          </li><br>
-          <p>Twitter: a</p>
-          <li>
             
           </li>
           <p>Instagram: a</p>

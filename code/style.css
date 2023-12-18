@@ -1,5 +1,6 @@
 * {
 	text-align: center;
+	
 }
 
 #submit {
@@ -96,4 +97,8 @@ input {
 
 #bksomelese{
 	box-shadow: rgba(2, 2, 2, 0.2) 0px 7px 29px 0px;
+}
+
+#formcss {
+	background-color: #7d664b;
 }

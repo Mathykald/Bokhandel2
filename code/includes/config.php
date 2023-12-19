@@ -18,6 +18,6 @@ try {
 if (!isset($_SESSION)) {
     session_start();
 }
-
+require_once 'class.user.php';
 $user = new USER($conn);
 ?>

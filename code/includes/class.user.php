@@ -1,5 +1,10 @@
 <?php
-class user {
+if (!isset($_SESSION)) {
+    session_start();
+}
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+class USER {
 	
 	public $errorMessage;
 	
@@ -101,35 +106,80 @@ class user {
 			}	
 		}
 		
-		public function login(){
+		public function login() {
 			$usernameEmail = $this->cleanInput($_POST['username']);
-			//Bygg query som hämtar ut en rad ur databasen ifall användarnamnet finns
+		
 			$stmt_checkIfUserExists = $this->conn->prepare("SELECT * FROM user_table WHERE u_username = :uname OR u_email = :email");
 			$stmt_checkIfUserExists->bindValue(":uname", $usernameEmail, PDO::PARAM_STR);
 			$stmt_checkIfUserExists->bindValue(":email", $usernameEmail, PDO::PARAM_STR);
 			$stmt_checkIfUserExists->execute();
-			//Skapa array av infon som hämtats
+		
 			$userNameMatch = $stmt_checkIfUserExists->fetch();
-			
-			if(!$userNameMatch){
-				$this->errorMessage = "No such user or email in database.";
+		
+			if (!$userNameMatch) {
+				$this->errorMessage = "No such user or email in the database.";
 				return $this->errorMessage;
 			}
+			$enteredPasswordBytes = unpack('C*', $_POST['password']);
+$hashedPasswordBytes = unpack('C*', $userNameMatch['u_password']);
+
+if ($enteredPasswordBytes === $hashedPasswordBytes) {
+    echo "Raw Bytes Match: Yes<br>";
+} else {
+    echo "Raw Bytes Match: No<br>";
+}
+$enteredPasswordHex = unpack('C*', $_POST['password']);
+$enteredPasswordHex = unpack('C*', $userNameMatch['u_password']);
+
+if ($enteredPasswordHex === $enteredPasswordHex) {
+    echo "Raw hex Match: Yes<br>";
+} else {
+    echo "Raw hex Match: No<br>";
+}
+// Convert the raw bytes of the entered password to a string
+$enteredPasswordString = implode('', array_map('chr', $enteredPasswordBytes));
+
+// Convert the raw bytes of the hashed password from the database to a string
+$hashedPasswordString = implode('', array_map('chr', $hashedPasswordBytes));
+
+// Compare the two strings directly
+if ($enteredPasswordString === $hashedPasswordString) {
+    echo "Raw password Match: Yes<br>";
+} else {
+    echo "Raw password Match: No<br>";
+}
+
+			echo "Entered Password Hex: " . bin2hex($_POST['password']) . "<br>";
+echo "Hashed Password Hex: " . bin2hex($userNameMatch['u_password']) . "<br>";
+			echo "Entered Password Length: " . strlen($_POST['password']) . "<br>";
+			echo "Hashed Password Length: " . strlen($userNameMatch['u_password']) . "<br>";	
+			// Display the entered password from the form (without hashing)
+			echo "Entered Password from Form: " . $_POST['password'] . "<br>";
+		
+			// Display the hashed password retrieved from the database
+			echo "Hashed Password from Database: " . $userNameMatch['u_password'] . "<br>";
+		
+			// Compare the entered password with the hashed password from the database
+			$checkPasswordMatch = password_verify(trim($_POST['password']), $userNameMatch['u_password']);
+			echo "Password Match Result: " . ($checkPasswordMatch ? 'Yes' : 'No') . "<br>";
+			$checkPasswordMatch = password_verify($enteredPasswordString, $hashedPasswordString);
+			echo "Password Match Result (direct string comparison): " . ($checkPasswordMatch ? 'Yes' : 'No') . "<br>";
 			
-			   $checkPasswordMatch = password_verify($_POST['password'], $userNameMatch['u_password']);
-   
-			   if($checkPasswordMatch == true) {
-				  $_SESSION['uname'] = $userNameMatch['u_username'];
-				  $_SESSION['urole'] = $userNameMatch['u_role'];
-				  $_SESSION['uid'] = $userNameMatch['u_ID'];
-				  return "success";
-			   } 
-			   else {
-				  $this->errorMessage = "INVALID password";     
-				  return $this->errorMessage;
-			   }
-			
+			// Debugging: Print user information
+			print_r($userNameMatch);
+		
+			if ($checkPasswordMatch) {
+				echo "Login successful";
+				$_SESSION['uname'] = $userNameMatch['u_username'];
+				$_SESSION['urole'] = $userNameMatch['u_role'];
+				$_SESSION['uid'] = $userNameMatch['u_ID'];
+				return "success";
+			} else {
+				$this->errorMessage = "Invalid password";
+				return $this->errorMessage;
+			}
 		}
+		
 		
 		public function checkLoginStatus(){
 			if(isset($_SESSION['uid'])){

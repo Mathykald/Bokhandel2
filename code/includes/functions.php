@@ -4,7 +4,12 @@
 <?php
 
         // Function code here
-    
+function cleanInput($data){
+	$data = trim($data);
+	$data = stripslashes($data);
+	$data = htmlspecialchars($data);
+	return $data;
+}
 
 if (!function_exists('createAuthor')) {
     function createAuthor($conn, $author_firstname) {
@@ -122,6 +127,57 @@ if (!function_exists('createIllustrator')) {
 	}
 }
 
+function selectSortedBooks($conn, $sortCriteria, $direction) {
+    echo $sortCriteria;
+
+    $sql_query = 'SELECT *
+    FROM book_table
+    INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
+    INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
+    INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
+    INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
+    INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
+    INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
+    WHERE book_status_fk = 1';
+
+    if ($sortCriteria == "book_price") {
+        $sql_query .= ' ORDER BY book_price';
+    } elseif ($sortCriteria == "book_pages") {
+        $sql_query .= ' ORDER BY book_pages';
+    } elseif ($sortCriteria == "lang_language") {
+        $sql_query .= ' ORDER BY lang_language';
+    } elseif ($sortCriteria == "genre_name") {
+        $sql_query .= ' ORDER BY genre_name';
+    }
+
+    if ($direction == 1) {
+        $sql_query .= ' ASC';
+    } elseif ($direction == 2) {
+        $sql_query .= ' DESC';
+    }
+
+	
+
+    // echo $sql_query;
+
+    $selectedBooks = $conn->prepare($sql_query);
+    $selectedBooks->execute();
+    return $selectedBooks;
+}
+
+if (isset($_GET['sortCriteria']) && isset($_GET['direction'])) {
+    $sortCriteria = $_GET['sortCriteria'];
+    $direction = $_GET['direction'];
+
+    // Call the function with the selected criteria and direction
+    $selectedBooks = selectSortedBooks($conn, $sortCriteria, $direction);
+
+    // Further processing/display of the sorted books
+} else {
+    // Handle the case where no sorting criteria is selected
+    echo "Please select a sorting criteria and direction.";
+}
+
 if (!function_exists('createCategory')) {
 	function createCategory($conn, $category_name){
 		
@@ -188,7 +244,7 @@ if (!function_exists('selectAllBooks')) {
 	}
 }
 if (!function_exists('selectBooks')) {
-	function selectBooks($conn, $amount){
+	function selectBooks($conn){
 		$selectedBooks = $conn->prepare(
 		'SELECT *
 		FROM book_table
@@ -204,10 +260,8 @@ if (!function_exists('selectBooks')) {
 		ON book_table.book_category_fk = category_table.category_id
 		INNER JOIN genre_table
 		ON book_table.book_genre_fk = genre_table.genre_id 
-		WHERE book_status_fk = 1
-		LIMIT :amount'
+		WHERE book_status_fk = 1'
 		);
-		$selectedBooks->bindParam(':amount', $amount, PDO::PARAM_INT);
 		$selectedBooks->execute();
 		return $selectedBooks;
 	}

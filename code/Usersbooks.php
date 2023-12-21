@@ -2,9 +2,21 @@
 <?php
 	include 'header.php';
 ?>
-
-<div class="bc">
+ <?php 
+	if($user->checkLoginStatus()){
+ ?>
+    <form method="POST" action="">
+		<input type="submit" name="logout-button" value="log out" class="btn btn-success me-2">
+	</form>
 	
+	<?php 
+		if($user->checkUserRole(50)){
+			echo "<a href='admin.php'>Admin page</a>";
+		}
+	
+	} ?>	
+<div class="bc">
+	<a href="login.php">Login</a>
 <?php
 
 $allBooks = selectAllBooks($conn);
@@ -31,7 +43,7 @@ else {
 
 
     foreach ($selectedBooks as $row){
-
+        
     echo "
 	<div id='bksomelese'class='card m-3 col-sm-3'>
 		<img src='uploads/{$row['book_img']}' class='card-img-top' alt'...'>
@@ -43,6 +55,8 @@ else {
             <p>{$row['book_price']}€</p>
             <p>Sidor: {$row['book_pages']}</p>
 			 <a href='single_Book.php?bookID={$row['book_id']}'>View full info</a>
+				<a href='edit_book.php?bookID={$row['book_id']}'>Edit book info</a>
+				<a href='deletebook.php?bookID={$row['book_id']}'>Delete book</a>
 
 			 
 		</div>

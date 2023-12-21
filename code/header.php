@@ -1,8 +1,26 @@
 <?php
 include 'includes/config.php';
-	include 'includes/functions.php';
-	include 'includes/fileuppload.php';
-  ?>
+include 'includes/functions.php';
+include 'includes/fileuppload.php';
+
+if (isset($_POST['logout'])) {
+  logout();
+}
+
+function logout() {
+
+  session_unset();
+
+
+  session_destroy();
+
+
+  header("Location: index.php");
+  exit();
+}
+
+
+?>
 <!DOCTYPE html>  
 <html>  
 <head>  
@@ -31,6 +49,25 @@ include 'includes/config.php';
           <a class="nav-link active color" href="books.php">Books</a>
         </li>
     </ul>
+    <div class="">
+	<a href="login.php">Login</a>
+    <?php 
+	if($user->checkLoginStatus()){
+ ?>
+ 
+ <form method="POST" action="">
+    <input type="submit" name="logout" value="Log Out" class="btn btn-success me-2">
+</form>
+
+	
+ 
+	<?php 
+    }
+		if($user->checkUserRole(50)){
+			echo "<a href='admin.php'>Admin page</a>";
+		}
+	
+	 ?>	
     </div>
   </div>
 </nav>

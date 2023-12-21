@@ -3,13 +3,17 @@
 ?>
 <?php
 
-        // Function code here
+if (!function_exists('cleanInput')) {
 function cleanInput($data){
 	$data = trim($data);
 	$data = stripslashes($data);
 	$data = htmlspecialchars($data);
 	return $data;
 }
+}
+
+
+
 
 if (!function_exists('createAuthor')) {
     function createAuthor($conn, $author_firstname) {
@@ -34,16 +38,16 @@ function createPublish($conn, $publish_name ){
 }
 }
 if (!function_exists('createBook')) {
-	function createBook($conn, $book_title, $book_price, $book_rating, $book_author, $book_illustrator, $book_description, $book_genre, $book_pages, $book_img, $book_language, $book_agerec, $book_publish, $book_category, $release_date, $status_name ){
-	
+	function createBook($conn, $book_title, $book_price, $book_rating, $book_author, $book_illustrator, $book_description, $book_genre, $book_pages, $book_img, $book_language, $book_agerec, $book_publish, $book_category, $release_date, $status_name, $uid){
+		$uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : null;
 		$stmt_insertBook = $conn->prepare("INSERT INTO book_table (book_title, book_price, book_rating, book_author_fk, book_illustrator_fk, book_description, 
 		book_genre_fk, book_pages, book_img, book_lang_fk, 
 		book_agerec_fk, book_publish_fk, book_category_fk, 
-		release_date, book_status_fk)
+		release_date, book_status_fk, book_user_fk)
 		VALUES (:book_title, :book_price, :book_rating, :book_author, :book_illustrator, :book_description, 
 		:book_genre, :book_pages, :book_img, :book_language, 
 		:book_agerec, :book_publish, :book_category, 
-		:release_date, :status_name )");
+		:release_date, :status_name, :uid )");
 		$stmt_insertBook->bindParam(':book_title', $book_title, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':book_price', $book_price, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':book_rating', $book_rating, PDO::PARAM_STR);
@@ -59,6 +63,7 @@ if (!function_exists('createBook')) {
 		$stmt_insertBook->bindParam(':book_category', $book_category, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':release_date', $release_date, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':status_name', $status_name, PDO::PARAM_STR);
+		$stmt_insertBook->bindParam(':uid', $uid, PDO::PARAM_STR);
 		echo "Book Genre ID: " . $book_genre;
 		echo "Book title ID: " . $book_illustrator;
 		$stmt_insertBook->execute();
@@ -92,6 +97,7 @@ if (!function_exists('updateBook')) {
             book_status_fk = :status_name 
             WHERE book_id = :bid");
 
+								
         $stmt_insertBook->bindParam(':bid', $bid, PDO::PARAM_INT);
         $stmt_insertBook->bindParam(':book_title', $book_title, PDO::PARAM_STR);
         $stmt_insertBook->bindParam(':book_price', $book_price, PDO::PARAM_STR);
@@ -126,58 +132,63 @@ if (!function_exists('createIllustrator')) {
 		return $insertedIllustratorId;
 	}
 }
-
+if (!function_exists('selectSortedBooks')) {
 function selectSortedBooks($conn, $sortCriteria, $direction) {
-    echo $sortCriteria;
-
     $sql_query = 'SELECT *
-    FROM book_table
-    INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
-    INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
-    INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
-    INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
-    INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
-    INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
-    WHERE book_status_fk = 1';
+        FROM book_table
+		INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
+        INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
+        INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
+        INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
+        INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
+        INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
+        WHERE book_status_fk = 1';
 
     if ($sortCriteria == "book_price") {
         $sql_query .= ' ORDER BY book_price';
-    } elseif ($sortCriteria == "book_pages") {
+    } else if ($sortCriteria == "book_pages") {
         $sql_query .= ' ORDER BY book_pages';
-    } elseif ($sortCriteria == "lang_language") {
-        $sql_query .= ' ORDER BY lang_language';
-    } elseif ($sortCriteria == "genre_name") {
-        $sql_query .= ' ORDER BY genre_name';
     }
 
     if ($direction == 1) {
         $sql_query .= ' ASC';
-    } elseif ($direction == 2) {
+    } else if ($direction == 2) {
         $sql_query .= ' DESC';
     }
 
-	
+    // Check if filterlanguage is set and not 0
+    if (isset($_GET['filterlanguage']) && $_GET['filterlanguage'] != 0) {
+        $selectedLanguage = cleanInput($_GET['filterlanguage']);
+        // Update the SQL query to include the language filter
+        $sql_query .= ' AND book_table.book_lang_fk = :filterlanguage';
+    }
 
-    // echo $sql_query;
+	    // Check if filtercategory is set and not 0
+	if (isset($_GET['filtercategory']) && $_GET['filtercategory'] != 0) {
+		$filtercategory = cleanInput($_GET['filtercategory']);
+		// Update the SQL query to include the category filter
+		$sql_query .= ' AND book_table.book_category = :filtercategory';
+	}
 
+    // Prepare the statement
     $selectedBooks = $conn->prepare($sql_query);
+
+    // Bind the parameter if it's set
+    if (isset($selectedLanguage)) {
+        $selectedBooks->bindParam(':filterlanguage', $selectedLanguage);
+    }
+
+    // Bind the genre parameter if it's set
+    if (isset($selectedCategories)) {
+        $selectedBooks->bindParam(':filtercategory', $selectedCategories);
+    }	
+
+    // Execute the query
     $selectedBooks->execute();
+
     return $selectedBooks;
 }
-
-if (isset($_GET['sortCriteria']) && isset($_GET['direction'])) {
-    $sortCriteria = $_GET['sortCriteria'];
-    $direction = $_GET['direction'];
-
-    // Call the function with the selected criteria and direction
-    $selectedBooks = selectSortedBooks($conn, $sortCriteria, $direction);
-
-    // Further processing/display of the sorted books
-} else {
-    // Handle the case where no sorting criteria is selected
-    echo "Please select a sorting criteria and direction.";
 }
-
 if (!function_exists('createCategory')) {
 	function createCategory($conn, $category_name){
 		
@@ -237,46 +248,59 @@ if (!function_exists('fetchgenre')) {
 		return $selectedgenre;
 	}
 }
+if (!function_exists('fetchusers')) {
+	function fetchusers($conn){
+		$selecteduser = $conn->query("SELECT * FROM user_table");
+		return $selectedusser;
+	}
+}
 if (!function_exists('selectAllBooks')) {
 	function selectAllBooks($conn){
 		$allBooks = $conn->query("SELECT DISTINCT book_genre_fk FROM book_table");
 		return $allBooks;
 	}
 }
+
 if (!function_exists('selectBooks')) {
-	function selectBooks($conn){
-		$selectedBooks = $conn->prepare(
-		'SELECT *
-		FROM book_table
-		INNER JOIN agerec_table
-		ON book_table.book_agerec_fk = agerec_table.agerec_id 
-		INNER JOIN author_table
-		ON book_table.book_author_fk = author_table.author_id 
-		INNER JOIN lang_table
-		ON book_table.book_lang_fk = lang_table.lang_id
-		INNER JOIN publish_table
-		ON book_table.book_publish_fk = publish_table.publish_id
-		INNER JOIN category_table
-		ON book_table.book_category_fk = category_table.category_id
-		INNER JOIN genre_table
-		ON book_table.book_genre_fk = genre_table.genre_id 
-		WHERE book_status_fk = 1'
-		);
-		$selectedBooks->execute();
-		return $selectedBooks;
-	}
+    function selectBooks($conn)
+    {
+        // Assuming you have a session variable 'uid' to use in the query
+        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : null;
+
+        $sql = 'SELECT *
+                FROM book_table
+                INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
+                INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
+                INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
+                INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
+                INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
+                INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
+                INNER JOIN user_table ON book_table.book_user_fk = user_table.u_ID
+                WHERE book_status_fk = 1 
+                AND user_table.u_ID = :uid';
+
+        $selectedBooks = $conn->prepare($sql);
+        $selectedBooks->bindParam(':uid', $uid, PDO::PARAM_INT);
+        $selectedBooks->execute();
+
+        return $selectedBooks;
+    }
 }
+
+
+
 
 if (!function_exists('selectBookbook')) {
 	function selectBookbook($conn, $id){
 		$selectedBook = $conn->prepare(
 		'SELECT *
-		FROM book_table
-		INNER JOIN auther_table
-		ON book_table.book_author_fk = auther_table.auther_id 
-		INNER JOIN illustrator_table
-		ON book_table.book_illustrator_fk = illustrator_table.illustrator_id 
-		WHERE book_table.book_id = :id'
+            FROM book_table
+            INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
+            INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
+            INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
+            INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
+            INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
+            INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id'
 		);
 		$selectedBooks->bindParam(':id', $id, PDO::PARAM_INT);
 		$selectedBooks->execute();
@@ -309,7 +333,7 @@ if (!function_exists('selectSingleBook')) {
             INNER JOIN genre_table AS g ON b.book_genre_fk = g.genre_id
             INNER JOIN status_table AS s ON b.book_status_fk = s.status_id
             WHERE b.book_status_fk = 1 AND b.book_id = :id'
-        );
+        );	
 
         $selectedBook->bindParam(':id', $id, PDO::PARAM_INT);
         $selectedBook->execute();
@@ -319,3 +343,4 @@ if (!function_exists('selectSingleBook')) {
     }
 }
 ?>
+

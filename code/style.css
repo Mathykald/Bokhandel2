@@ -97,10 +97,14 @@ input {
 }
 
 #formcss {
-	background-color: #7d664b;
+	background-color: #bc711b;
 }
 
 #content {
-	background-color:#7d664b
+	background-color:#e07f0f
 	
+}
+
+.bc {
+	background-color:#bc711b;
 }

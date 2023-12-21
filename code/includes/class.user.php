@@ -129,9 +129,9 @@ if ($enteredPasswordBytes === $hashedPasswordBytes) {
     echo "Raw Bytes Match: No<br>";
 }
 $enteredPasswordHex = unpack('C*', $_POST['password']);
-$enteredPasswordHex = unpack('C*', $userNameMatch['u_password']);
+$hashedPasswordHex = unpack('C*', $userNameMatch['u_password']);
 
-if ($enteredPasswordHex === $enteredPasswordHex) {
+if ($enteredPasswordHex === $hashedPasswordHex) {
     echo "Raw hex Match: Yes<br>";
 } else {
     echo "Raw hex Match: No<br>";
@@ -159,12 +159,17 @@ echo "Hashed Password Hex: " . bin2hex($userNameMatch['u_password']) . "<br>";
 			// Display the hashed password retrieved from the database
 			echo "Hashed Password from Database: " . $userNameMatch['u_password'] . "<br>";
 		
-			// Compare the entered password with the hashed password from the database
-			$checkPasswordMatch = password_verify(trim($_POST['password']), $userNameMatch['u_password']);
-			echo "Password Match Result: " . ($checkPasswordMatch ? 'Yes' : 'No') . "<br>";
-			$checkPasswordMatch = password_verify($enteredPasswordString, $hashedPasswordString);
-			echo "Password Match Result (direct string comparison): " . ($checkPasswordMatch ? 'Yes' : 'No') . "<br>";
-			
+// Hash the entered password for comparison
+$hashedEnteredPassword = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
+
+// Compare the hashed entered password with the hashed password from the database
+$checkPasswordMatch = password_verify(trim($_POST['password']), $userNameMatch['u_password']);
+echo "Password Match Result: " . ($checkPasswordMatch ? 'Yes' : 'No') . "<br>";
+
+// Compare the hashed entered password with the hashed password from the database using direct string comparison
+$checkPasswordMatchDirect = ($hashedEnteredPassword === $userNameMatch['u_password']);
+echo "Password Match Result (direct string comparison): " . ($checkPasswordMatchDirect ? 'Yes' : 'No') . "<br>";
+
 			// Debugging: Print user information
 			print_r($userNameMatch);
 		
@@ -191,19 +196,25 @@ echo "Hashed Password Hex: " . bin2hex($userNameMatch['u_password']) . "<br>";
 		}
 		
 		public function checkUserRole($req){
-			$stmt_checkRoleLevel = $this->conn->prepare("SELECT * FROM role_table WHERE r_ID = :urole");
-			$stmt_checkRoleLevel->bindValue(":urole", $_SESSION['urole'], PDO::PARAM_STR);
-			$stmt_checkRoleLevel->execute();
-			$currentUserRoleInfo = $stmt_checkRoleLevel->fetch();
-			
-			if($currentUserRoleInfo["r_level"] >= $req){
-				return true;
-			}
-			else {
+			// Check if 'urole' key exists in $_SESSION
+			if (isset($_SESSION['urole'])) {
+				$stmt_checkRoleLevel = $this->conn->prepare("SELECT * FROM role_table WHERE r_ID = :urole");
+				$stmt_checkRoleLevel->bindValue(":urole", $_SESSION['urole'], PDO::PARAM_STR);
+				$stmt_checkRoleLevel->execute();
+				$currentUserRoleInfo = $stmt_checkRoleLevel->fetch();
+				
+				if($currentUserRoleInfo["r_level"] >= $req){
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				// Handle the case when 'urole' key is not set in $_SESSION
+				// You might want to log an error, redirect the user, or handle it as appropriate for your application.
 				return false;
 			}
-			
 		}
+		
 		
 		public function redirect($url){
 			header("Location: ".$url);

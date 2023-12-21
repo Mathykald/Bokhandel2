@@ -24,7 +24,7 @@ include 'header.php';
     createBook($conn, $_POST['book_title'], $_POST['book_price'], $_POST['book_rating'], $_POST['book_author'], 
     $_POST['book_illustrator'], $_POST['book_description'], $_POST['book_genre'], $_POST['book_pages'], 
     $_FILES['bimage']['name'], $_POST['book_language'], $_POST['book_agerec'], $_POST['book_publish'], 
-    $_POST['book_category'], $_POST['release_date'], $_POST['status_name']);	
+    $_POST['book_category'], $_POST['release_date'], $_POST['status_name'], $_POST['uid']);	
 	  
 	 // echo $_post['firstname'];
 	 // echo $files['bimage'] ['name'];
@@ -166,6 +166,8 @@ include 'header.php';
   <option value="2">Finns inte i lager</option>
 
 </select>
+
+<input type="hidden" name="uid" value="<?php	echo  $_SESSION['uid'] ?>"> 
 
   <input id="submit" type="submit" name="article-submit" value="Skapa"><br>
 

@@ -4,7 +4,7 @@
 ?>
 
 <div class="bc">
-	<a href="login/index.php">Login</a>
+
 <?php
 $allBooks = selectAllBooks($conn);
 
@@ -23,13 +23,13 @@ else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
 
 
 else {
-	$selectedBooks = selectBooks($conn);
+	$everyBook = everyBook($conn);
 	}
 
 	echo "<div class='row'>";
 
 
-    foreach ($selectedBooks as $row){
+    foreach ($everyBook as $row){
 
     echo "
 	<div id='bksomelese'class='card m-3 col-sm-3'>

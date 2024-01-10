@@ -1,122 +1,187 @@
 
 <?php
 	include 'header.php';
+
+// Check if the form is submitted
+if (isset($_GET['sort-submit'])) {
+	$sortPrice = $_GET['sortprice'];
+	$sortPages = $_GET['sortpages'];
+	// Check if $sortPrice or $sortPages has a valid value
+	if (($sortPrice == 1 || $sortPrice == 2) || ($sortPages == 1 || $sortPages == 2)) {
+		// Call the selectSortedBooks function
+		$sortedBooks = selectSortedBooks($conn, $sortPrice, $sortPages);
+	} else {
+		// Handle invalid values or show an error message
+		echo "Invalid sorting criteria or direction.";
+	}
+}
+
+if (isset($_GET['filter-submit'])) {
+    $languageId = $_GET['filterlanguage'];
+    $categoryId = $_GET['filtercateogry'];
+    $genreId = $_GET['filtergenre'];
+
+    $filteredBooks = selectFilteredBooks($conn, $languageId, $categoryId, $genreId);
+}
+
 ?>
 
 <div class="bc">
-	
+
+<script>
+function showResult(str) {
+  if (str.length==0) {
+    document.getElementById("livesearch").innerHTML="";
+    document.getElementById("livesearch").style.border="0px";
+    return;
+  }
+  var xmlhttp=new XMLHttpRequest();
+  xmlhttp.onreadystatechange=function() {
+    if (this.readyState==4 && this.status==200) {
+      document.getElementById("livesearch").innerHTML=this.responseText;
+      document.getElementById("livesearch").style.border="1px solid #A5ACB2";
+    }
+  }
+  xmlhttp.open("GET","livesearch.php?q="+str,true);
+  xmlhttp.send();
+}
+</script>
+
+
 <?php
+if(isset($_POST['searchbook_submit'])){
+	$bookList = $user->searchBooks();
+}
 
-$allBooks = selectAllBooks($conn);
+$displayBooks = !empty($filteredBooks) ? $filteredBooks : everyBook($conn);
 
-if(isset($_GET['sortprice']) && $_GET['sortprice'] != 0){
+
+
+/*if(isset($_GET['sortprice']) && $_GET['sortprice'] != 0){
 	$sortCriteria = 'book_price';
 	$sortDirection = cleanInput($_GET['sortprice']);
-	$selectedBooks = selectSortedBooks($conn, $sortCriteria, $sortDirection);
+	$everyBook = selectSortedBooks($conn, $sortCriteria, $sortDirection);
 }
 
 else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
 	$sortCriteria = 'book_pages';
 	$sortDirection = cleanInput($_GET['sortpages']);
-	$selectedBooks = selectSortedBooks($conn, $sortCriteria, $sortDirection);
-}
+	$everyBook = selectSortedBooks($conn, $sortCriteria, $sortDirection);
+}*/
 
-
-
-else {
-	$selectedBooks = selectBooks($conn);
-	}
-
-	echo "<div class='row'>";
-
-
-    foreach ($selectedBooks as $row){
-
-    echo "
-	<div id='bksomelese'class='card m-3 col-sm-3'>
-		<img src='uploads/{$row['book_img']}' class='card-img-top' alt'...'>
-		<div class='card-body'>
-		<h5 class'card-title'>{$row['book_title']}</h5>
-			<p class='card-text'><p>
-		</div>
-			<p>{$row['book_description']}</p>
-            <p>{$row['book_price']}€</p>
-            <p>Sidor: {$row['book_pages']}</p>
-			 <a href='single_Book.php?bookID={$row['book_id']}'>View full info</a>
-
-			 
-		</div>
-		";
-}
-echo "</div>";
+    echo "<form method='POST' action=''>";
+    echo "<h4 class='mt-3' for='searchinput'>Sök efter bok</h4>";
+    echo "<input class='mb-3' style='width: 250px; height: 32px;' type='text' onkeyup='showResult(this.value)' id='searchinput' name='search_bookname' placeholder='Ange titel, författare osv...'>";
+	echo "<div id='livesearch'></div>";
+    echo "<input class='btn btn-dark' type='submit' name='searchbook_submit' value='Sök'>";
+    echo "</form>";
 	
+	echo "<div class='row'>";
+    foreach ($displayBooks as $row) {
+        echo "<div id='bksomelese' class='card m-3 col-sm-3'>";
+        echo "<img src='uploads/{$row['book_img']}' class='card-img-top' alt='...'>";
+        echo "<div class='card-body'>";
+        echo "<h5 class='card-title'>{$row['book_title']}</h5>";
+        echo "<p class='card-text'></p>";
+        echo "</div>";
+        echo "<p>{$row['book_description']}</p>";
+        echo "<p>{$row['book_price']}€</p>";
+        echo "<p>Sidor: {$row['book_pages']}</p>";
+        echo "<a href='single_Book.php?bookID={$row['book_id']}'>View full info</a>";
+        echo "</div>";
+    }
 
-?>
+    if (empty($displayBooks)) {
+        echo "<p>No matching books found.</p>";
+    }
 
-<div class="sidebar pt-3 col-sm-4 bg-light">
+	echo "</div>";
+    ?>
+    <div class="sidebar pt-3 col-sm-4 bg-light">
+	<div class="sidebar pt-3 col-sm-4 bg-light">
     <form action="" method="GET" id="sortform">
-        <label for="sortprice">Sortera:</label>
-        <select name="sortprice" id="sortprice" onchange="submitSortForm()">
-            <option value="0">Choose..</option>
-            <option value="1">Billigaste-Dyrast</option>
-            <option value="2">Dyraste-Billigast</option>
-        </select> <br><br>
-        <label for="sortpages">Sortera:</label>
-        <select name="sortpages" id="sortpages" onchange="submitSortForm()">
+    
+        <label for="filterlanguage">Filtrera med language:</label>
+        	<select name="filterlanguage" id="filterlanguage">
+    	        <option value="0">Choose..</option>
+	                <?php
+                        $allBooks = fetchlanguages($conn);
+				        foreach($allBooks as $row){
+						    echo "<option value='{$row['lang_id']}'>{$row['lang_language']}</option>";
+                        }
+                    ?>
+	        </select><br>
+         
+        <label for="filtercateogry">Filtrera med Kategori</label>
+			<select name="filtercateogry" id="filtercateogry">
+				<option value="0">Choose..</option>
+                	<?php
+            	        $allBooks = fetchCategories($conn);
+				        foreach($allBooks as $row){
+						    echo "<option value='{$row['category_id']}'>{$row['category_name']}</option>";
+						}
+                    ?>
+			</select><br>
+
+		<label for="filtergenre">Filtrera med genre</label>
+			<select name="filtergenre" id="filtergenre">
+				<option value="0">Choose..</option>
+	                <?php
+	                    $allBooks = fetchgenre($conn);
+	                    foreach ($allBooks as $row){
+			                echo "<option value='{$row['genre_id']}'>{$row['genre_name']}</option>";
+	                   }
+                    ?>
+		    </select> <br>
+			<input id="filter" type="submit" name="filter-submit" value="Filter"><br>
+	</form><br>
+
+	<form action="" method="GET" id="sortform">
+		<label for="sortprice">Sortera Pris:</label>
+        <select name="sortprice" id="sortprice">
+        	<option value="0">Choose..</option>
+        	<option value="1">Billigaste-Dyrast</option>
+          	<option value="2">Dyraste-Billigast</option>
+    	</select> <br>
+        <label for="sortpages">Sortera Sidantal:</label>
+        <select name="sortpages" id="sortpages">
             <option value="0">Choose..</option>
             <option value="1">Lägsta sidantal</option>
             <option value="2">Högsta sidantal</option>
-        </select> <br>
-    
+        </select>
+		<input id="Sort" type="submit" name="sort-submit" value="Sort"><br>
 
-    
-        <label for="filterlanguage">Filtrera med language:</label>
-                    <select name="filterlanguage" id="filterlanguage" onchange="submitFilterForm()">
-                    <option value="0">Choose..</option>
-                        <?php
-                            $allBooks = fetchlanguages($conn);
-					        foreach($allBooks as $row){
-						    echo "<option value='{$row['lang_id']}'>{$row['lang_language']}</option>";
-                            }
-                        ?>
-			        </select><br>
-
-
-
-                        
-                <label for="filtercateogry">Filtrera med Kategori</label>
-					<select name="filtercateogry" id="filtercateogry" onchange="submitFilterForm()">
-					<option value="0">Choose..</option>
-                        <?php
-                            $allBooks = fetchCategories($conn);
-					        foreach($allBooks as $row){
-						    echo "<option value='{$row['category_id']}'>{$row['category_name']}</option>";
-					}
-                    ?>
-				</select> <br>
-
-
-
-
-            
-				<label for="filtergenre">Filtrera med genre</label>
-					<select name="filtergenre" id="filtergenre" onchange="submitFilterForm()">
-					<option value="0">Choose..</option>
-                        <?php
-		                    $allBooks = fetchgenre($conn);
-		                    foreach ($allBooks as $row){
-			                echo "<option value='{$row['genre_id']}'>{$row['genre_name']}</option>";
-		                    }
-	                    ?>
-				    </select> <br>
-
-
-
-
-</select>
 	</form>
 </div>
 
 </div>
+    </div>
+</div>
+
+<script>
+function showResult(str) {
+  if (str.length==0) {
+    document.getElementById("livesearch").innerHTML="";
+    document.getElementById("livesearch").style.border="0px";
+    return;
+  }
+  var xmlhttp=new XMLHttpRequest();
+  xmlhttp.onreadystatechange=function() {
+    if (this.readyState==4 && this.status==200) {
+      document.getElementById("livesearch").innerHTML=this.responseText;
+      document.getElementById("livesearch").style.border="1px solid #A5ACB2";
+    }
+  }
+  xmlhttp.open("GET","livesearch.php?q="+str,true);
+  xmlhttp.send();
+}
+</script>
+</head>
+<body>
+
+<form>
+<input type="text" size="30" onkeyup="showResult(this.value)">
+<div id="livesearch"></div>
+</form>
 
 <?php include 'footer.php';?>

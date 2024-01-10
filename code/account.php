@@ -1,6 +1,15 @@
 <?php
 include_once "header.php";
 
+if($user->checkLoginStatus()){
+	if(!$user->checkLoginStatus(true)){
+		$user->redirect("create_book.php");
+	}
+}   
+else{
+	$user->redirect("index.php");
+}
+
 /*if(!$user->checkLoginStatus()){
 	$user->redirect("index.php");
 }*/

@@ -120,58 +120,13 @@ class USER {
 				$this->errorMessage = "No such user or email in the database.";
 				return $this->errorMessage;
 			}
-			$enteredPasswordBytes = unpack('C*', $_POST['password']);
-$hashedPasswordBytes = unpack('C*', $userNameMatch['u_password']);
-
-if ($enteredPasswordBytes === $hashedPasswordBytes) {
-    echo "Raw Bytes Match: Yes<br>";
-} else {
-    echo "Raw Bytes Match: No<br>";
-}
-$enteredPasswordHex = unpack('C*', $_POST['password']);
-$hashedPasswordHex = unpack('C*', $userNameMatch['u_password']);
-
-if ($enteredPasswordHex === $hashedPasswordHex) {
-    echo "Raw hex Match: Yes<br>";
-} else {
-    echo "Raw hex Match: No<br>";
-}
-// Convert the raw bytes of the entered password to a string
-$enteredPasswordString = implode('', array_map('chr', $enteredPasswordBytes));
-
-// Convert the raw bytes of the hashed password from the database to a string
-$hashedPasswordString = implode('', array_map('chr', $hashedPasswordBytes));
-
-// Compare the two strings directly
-if ($enteredPasswordString === $hashedPasswordString) {
-    echo "Raw password Match: Yes<br>";
-} else {
-    echo "Raw password Match: No<br>";
-}
-
-			echo "Entered Password Hex: " . bin2hex($_POST['password']) . "<br>";
-echo "Hashed Password Hex: " . bin2hex($userNameMatch['u_password']) . "<br>";
-			echo "Entered Password Length: " . strlen($_POST['password']) . "<br>";
-			echo "Hashed Password Length: " . strlen($userNameMatch['u_password']) . "<br>";	
-			// Display the entered password from the form (without hashing)
-			echo "Entered Password from Form: " . $_POST['password'] . "<br>";
-		
-			// Display the hashed password retrieved from the database
-			echo "Hashed Password from Database: " . $userNameMatch['u_password'] . "<br>";
-		
-// Hash the entered password for comparison
-$hashedEnteredPassword = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
 
 // Compare the hashed entered password with the hashed password from the database
 $checkPasswordMatch = password_verify(trim($_POST['password']), $userNameMatch['u_password']);
-echo "Password Match Result: " . ($checkPasswordMatch ? 'Yes' : 'No') . "<br>";
+echo " " . ($checkPasswordMatch ? 'Yes' : 'Wrong username or password') . "<br>";
 
-// Compare the hashed entered password with the hashed password from the database using direct string comparison
-$checkPasswordMatchDirect = ($hashedEnteredPassword === $userNameMatch['u_password']);
-echo "Password Match Result (direct string comparison): " . ($checkPasswordMatchDirect ? 'Yes' : 'No') . "<br>";
 
-			// Debugging: Print user information
-			print_r($userNameMatch);
+	
 		
 			if ($checkPasswordMatch) {
 				echo "Login successful";
@@ -272,7 +227,16 @@ echo "Password Match Result (direct string comparison): " . ($checkPasswordMatch
 			$searchUsersQuery = $this->conn->prepare("SELECT * FROM user_table WHERE u_username LIKE :searchParam");
 			$searchUsersQuery->bindParam(":searchParam", $cleanSearchParam, PDO::PARAM_STR);
 			$searchUsersQuery->execute();
-			return $searchUsersQuery;			
+			return $searchUsersQuery;
+		}
+		
+		public function searchBooks(){
+			$cleanSearchParam = $this->cleanInput($_POST['search_bookname']);
+			$cleanSearchParam = "%".$cleanSearchParam."%";
+			$searchBooksQuery = $this->conn->prepare("SELECT * FROM book_table WHERE book_title LIKE :searchBookParam");
+			$searchBooksQuery->bindParam(":searchBookParam", $cleanSearchParam, PDO::PARAM_STR);
+			$searchBooksQuery->execute();
+			return $searchBooksQuery;
 		}
 
 		public function updateUserStatus($uid){

@@ -1,22 +1,22 @@
 
 <?php
 	include 'header.php';
+
+    if($user->checkLoginStatus()){
+        if(!$user->checkLoginStatus(true)){
+            $user->redirect("create_book.php");
+        }
+    }   
+    else{
+        $user->redirect("index.php");
+    }
 ?>
- <?php 
-	if($user->checkLoginStatus()){
- ?>
-    <form method="POST" action="">
-		<input type="submit" name="logout-button" value="log out" class="btn btn-success me-2">
-	</form>
+
+
 	
-	<?php 
-		if($user->checkUserRole(50)){
-			echo "<a href='admin.php'>Admin page</a>";
-		}
 	
-	} ?>	
 <div class="bc">
-	<a href="login.php">Login</a>
+	
 <?php
 
 $allBooks = selectAllBooks($conn);

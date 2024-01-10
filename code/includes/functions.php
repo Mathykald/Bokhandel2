@@ -132,63 +132,94 @@ if (!function_exists('createIllustrator')) {
 		return $insertedIllustratorId;
 	}
 }
-if (!function_exists('selectSortedBooks')) {
-function selectSortedBooks($conn, $sortCriteria, $direction) {
-    $sql_query = 'SELECT *
-        FROM book_table
-		INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
-        INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
-        INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
-        INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
-        INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
-        INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
-        WHERE book_status_fk = 1';
 
-    if ($sortCriteria == "book_price") {
-        $sql_query .= ' ORDER BY book_price';
-    } else if ($sortCriteria == "book_pages") {
-        $sql_query .= ' ORDER BY book_pages';
+if (!function_exists('selectFilteredBooks')) {
+function selectFilteredBooks($conn, $languageId, $categoryId, $genreId){
+    $addedToQuery = false;
+    $query = 'SELECT *
+              FROM book_table AS b
+              INNER JOIN lang_table AS l ON b.book_lang_fk = l.lang_id
+              INNER JOIN category_table AS c ON b.book_category_fk = c.category_id
+              INNER JOIN genre_table AS g ON b.book_genre_fk = g.genre_id
+              WHERE ';
+
+    if ($languageId != 0 && $addedToQuery == true) {
+        $query .= 'AND l.lang_id = :languageId';
+    }
+    else if ($languageId != 0 && $addedToQuery == false) {
+        $query .= 'l.lang_id = :languageId';
+        $addedToQuery = true;
     }
 
-    if ($direction == 1) {
-        $sql_query .= ' ASC';
-    } else if ($direction == 2) {
-        $sql_query .= ' DESC';
+    if ($categoryId != 0 && $addedToQuery == true) {
+        $query .= ' AND c.category_id = :categoryId';
+    }
+    else if ($categoryId != 0 && $addedToQuery == false) {
+        $query .= 'c.category_id = :categoryId';
+        $addedToQuery = true;
     }
 
-    // Check if filterlanguage is set and not 0
-    if (isset($_GET['filterlanguage']) && $_GET['filterlanguage'] != 0) {
-        $selectedLanguage = cleanInput($_GET['filterlanguage']);
-        // Update the SQL query to include the language filter
-        $sql_query .= ' AND book_table.book_lang_fk = :filterlanguage';
+    if ($genreId != 0 && $addedToQuery == true) {
+        $query .= ' AND g.genre_id = :genreId';
+    }
+    else if ($genreId != 0 && $addedToQuery == false) {
+        $query .= 'g.genre_id = :genreId';
+        $addedToQuery = true;
     }
 
-	    // Check if filtercategory is set and not 0
-	if (isset($_GET['filtercategory']) && $_GET['filtercategory'] != 0) {
-		$filtercategory = cleanInput($_GET['filtercategory']);
-		// Update the SQL query to include the category filter
-		$sql_query .= ' AND book_table.book_category = :filtercategory';
-	}
+    $stmt = $conn->prepare($query);
 
-    // Prepare the statement
-    $selectedBooks = $conn->prepare($sql_query);
-
-    // Bind the parameter if it's set
-    if (isset($selectedLanguage)) {
-        $selectedBooks->bindParam(':filterlanguage', $selectedLanguage);
+    if ($languageId != 0) {
+        $stmt->bindParam(':languageId', $languageId, PDO::PARAM_INT);
     }
 
-    // Bind the genre parameter if it's set
-    if (isset($selectedCategories)) {
-        $selectedBooks->bindParam(':filtercategory', $selectedCategories);
-    }	
+    if ($categoryId != 0) {
+        $stmt->bindParam(':categoryId', $categoryId, PDO::PARAM_INT);
+    }
 
-    // Execute the query
-    $selectedBooks->execute();
-
-    return $selectedBooks;
+    if ($genreId != 0) {
+        $stmt->bindParam(':genreId', $genreId, PDO::PARAM_INT);
+    }
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-}
+
+    }
+
+    if (!function_exists('selectSortedBooks')) {
+        function selectSortedBooks($conn, $sortCriteria, $direction) {
+            $sql_query = 'SELECT *
+                FROM book_table
+                INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
+                INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
+                INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
+                INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
+                INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
+                INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
+                WHERE book_status_fk = 1';
+    
+            if ($sortCriteria == "book_price" || $sortCriteria == "book_pages") {
+                $sql_query .= " ORDER BY $sortCriteria";
+            }
+    
+            if ($direction == 1) {
+                $sql_query .= ' ASC';
+            } else if ($direction == 2) {
+                $sql_query .= ' DESC';
+            }
+    
+            // Prepare the statement
+            $stmt = $conn->prepare($sql_query);
+    
+            // Execute the query
+            $stmt->execute();
+    
+            // Fetch the results
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+
+    
 if (!function_exists('createCategory')) {
 	function createCategory($conn, $category_name){
 		
@@ -287,7 +318,27 @@ if (!function_exists('selectBooks')) {
     }
 }
 
+if (!function_exists('everyBook')) {
+    function everyBook($conn)
+    {
+        // Assuming you have a session variable 'uid' to use in the query
 
+        $sql = 'SELECT *
+                FROM book_table
+                INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
+                INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
+                INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
+                INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
+                INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
+                INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
+                WHERE book_status_fk = 1 ';
+
+        $everyBook = $conn->prepare($sql);
+        $everyBook->execute();
+
+        return $everyBook;
+    }
+}
 
 
 if (!function_exists('selectBookbook')) {

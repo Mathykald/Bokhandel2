@@ -3,6 +3,15 @@
 <?php
 include 'includes/config.php';
 include 'header.php';
+
+if($user->checkLoginStatus()){
+  if(!$user->checkLoginStatus(true)){
+      $user->redirect("create_book.php");
+  }
+}   
+else{
+  $user->redirect("index.php");
+}
 ?>
 
   <?php
@@ -63,7 +72,7 @@ include 'header.php';
 ?>
 
   <label for="book_author">Författare</label><br>
-  <select name="book_author" class="book_author">
+  <select name="book_author" id="book_author" class="book_author">
   <option>Författare</option>
   <?php
 		$allAuthors = fetchAuthors($conn);
@@ -73,7 +82,7 @@ include 'header.php';
 ?>
 </select>
 <label for="book_illustrator">Illustratörer</label><br>
-  <select name="book_illustrator" class="book_illustrator">
+  <select name="book_illustrator" id="book_illustrator" class="book_illustrator">
   <option>Illustratörer</option>
   <?php
 		$allIllustrators = fetchillustrators($conn);
@@ -90,7 +99,7 @@ include 'header.php';
 
 
 <label for="book_genre">Välj genre</label><br>
-<select name="book_genre" class="book_genre">
+<select name="book_genre" id="book_genre" class="book_genre">
   <option value="">Välj genre</option>
   <?php
 		$allgenre = fetchgenre($conn);
@@ -110,7 +119,7 @@ include 'header.php';
   </select>
 
 <label for="book_language">Välj språk</label><br>
-<select name="book_language" class="book_language">
+<select name="book_language" id="book_language" class="book_language">
   <option value="">Välj Språk</option>
   <?php
 		$alllanguage = fetchlanguages($conn);
@@ -122,7 +131,7 @@ include 'header.php';
 </select>
 
 <label for="book_agerec">Åldersrekommendation</label><br>
-<select name="book_agerec" class="book_agerec">
+<select name="book_agerec" id="book_agerec" class="book_agerec">
   <option value="">Åldersrekommendation</option>
   <?php
 		$allagerec = fetchagerec($conn);
@@ -134,7 +143,7 @@ include 'header.php';
 </select>
 
 <label for="book_publish">Välj förlag</label><br>
-<select name="book_publish" class="pubbook_publishlish">
+<select name="book_publish" id="book_publish" class="pubbook_publishlish">
   <option value="">Välj förlag</option>
   <?php
 		$allpublish = fetchpublishes($conn);
@@ -145,7 +154,7 @@ include 'header.php';
 </select>
   
 <label for="book_category">Välj kategori</label><br>
-<select name="book_category" class="book_category">
+<select name="book_category" id="book_category" class="book_category">
   <option value="">Välj kategori</option>
   <?php
 		$allCategories = fetchCategories($conn);

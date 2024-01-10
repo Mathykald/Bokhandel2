@@ -33,11 +33,11 @@
         <ul class="list-unstyled">
             
           </li>
-          <p>Instagram: a</p>
+          <p>Instagram: @BokhandelEkenäs</p>
           <li>
             
           </li>
-          <p>Facebook: a</p>
+          <p>Facebook: BokhandelEkenäs</p>
           <li>
             
           </li>
@@ -56,11 +56,11 @@
           <li>
             
           </li><br>
-          <p>Telefonnummer: 0417498531</p>
+          <p>Telefonnummer: 0458829416</p>
           <li>
 
           </li>
-          <p>Gmail: a.a@a.com</p>
+          <p>Gmail: Bokhandel.Ekenäs@gmail.com</p>
           <li>
             
           </li>
@@ -76,7 +76,7 @@
   
 
   
-  <div class="colorblack footer-copyright text-center py-3">© 2020 Copyright:
+  <div class="colorblack footer-copyright text-center py-3">© 2023 Copyright:
     <p class="colorblack">Matheus</p>
   </div>
  

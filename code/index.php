@@ -73,21 +73,20 @@ else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
     echo "<h4 class='mt-3' for='searchinput'>Sök efter bok</h4>";
     echo "<input class='mb-3' style='width: 250px; height: 32px;' type='text' onkeyup='showResult(this.value)' id='searchinput' name='search_bookname' placeholder='Ange titel, författare osv...'>";
 	echo "<div id='livesearch'></div>";
-    echo "<input class='btn btn-dark' type='submit' name='searchbook_submit' value='Sök'>";
     echo "</form>";
 	
 	echo "<div class='row'>";
     foreach ($displayBooks as $row) {
-        echo "<div id='bksomelese' class='card m-3 col-sm-3'>";
-        echo "<img src='uploads/{$row['book_img']}' class='card-img-top' alt='...'>";
+        echo "<div id='bksomelese' class='card m-3 col-sm-2'>";
+        echo "<a class='tingeling' href='single_Book.php?bookID={$row['book_id']}'><img src='uploads/{$row['book_img']}' class='card-img-top' alt='...'>";
         echo "<div class='card-body'>";
-        echo "<h5 class='card-title'>{$row['book_title']}</h5>";
+        echo "<h5 class='card-title'>{$row['book_title']}</h5></a>";
         echo "<p class='card-text'></p>";
         echo "</div>";
         echo "<p>{$row['book_description']}</p>";
         echo "<p>{$row['book_price']}€</p>";
         echo "<p>Sidor: {$row['book_pages']}</p>";
-        echo "<a href='single_Book.php?bookID={$row['book_id']}'>View full info</a>";
+        echo "<a class='tingeling' href='single_Book.php?bookID={$row['book_id']}'>View full info</a>";
         echo "</div>";
     }
 
@@ -179,9 +178,6 @@ function showResult(str) {
 </head>
 <body>
 
-<form>
-<input type="text" size="30" onkeyup="showResult(this.value)">
-<div id="livesearch"></div>
-</form>
+
 
 <?php include 'footer.php';?>

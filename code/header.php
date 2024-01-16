@@ -48,18 +48,18 @@ function logout() {
         <?php 
 	        if($user->checkLoginStatus()){
         ?>
-          <a class="nav-link active color" aria-current="page" href="create_book.php" >Create Books</a>
+          <a class="nav-link active color" aria-current="page" href="create_book.php" >Skapa bok</a>
           </li>
           <li>
-          <a class="nav-link active color" aria-current="page" href="Usersbooks.php" >My Books</a>
+          <a class="nav-link active color" aria-current="page" href="Usersbooks.php" >Mina böcker</a>
           </li>
           <li>
-          <a class="nav-link active color" aria-current="page" href="account.php" >My Account</a>
+          <a class="nav-link active color" aria-current="page" href="account.php" >Mitt konto</a>
         <?php 
 	        }?>
         </li>
         <li class="nav-item">
-          <a class="nav-link active color" href="books.php">Books</a>
+          <a class="nav-link active color" href="books.php">Böcker</a>
         </li>
     </ul>
     <div class="row">

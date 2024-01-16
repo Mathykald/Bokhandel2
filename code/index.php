@@ -4,17 +4,19 @@
 
 // Check if the form is submitted
 if (isset($_GET['sort-submit'])) {
-	$sortPrice = $_GET['sortprice'];
-	$sortPages = $_GET['sortpages'];
-	// Check if $sortPrice or $sortPages has a valid value
-	if (($sortPrice == 1 || $sortPrice == 2) || ($sortPages == 1 || $sortPages == 2)) {
-		// Call the selectSortedBooks function
-		$sortedBooks = selectSortedBooks($conn, $sortPrice, $sortPages);
-	} else {
-		// Handle invalid values or show an error message
-		echo "Invalid sorting criteria or direction.";
-	}
+    $sortPrice = $_GET['sortprice'];
+    $sortPages = $_GET['sortpages'];
+
+    // Check if $sortPrice or $sortPages has a valid value
+    if (($sortPrice == 1 || $sortPrice == 2) && ($sortPages == 1 || $sortPages == 2)) {
+        // Call the selectSortedBooks function
+        $sortedBooks = selectSortedBooks($conn, $sortPrice, $sortPages);
+    } else {
+        // Handle invalid values or show an error message
+        echo "Invalid sorting criteria or direction.";
+    }
 }
+
 
 if (isset($_GET['filter-submit'])) {
     $languageId = $_GET['filterlanguage'];
@@ -75,10 +77,14 @@ else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
 	echo "<div id='livesearch'></div>";
     echo "</form>";
 	
+    echo "<div class='container'>";
+    echo "<h3>Populära kategorier</h3>";
+    echo "<h3>Nya böcker</h3>";
+    echo "<h3>Featured böcker</h3>";
 	echo "<div class='row'>";
     foreach ($displayBooks as $row) {
         echo "<div id='bksomelese' class='card m-3 col-sm-2'>";
-        echo "<a class='tingeling' href='single_Book.php?bookID={$row['book_id']}'><img src='uploads/{$row['book_img']}' class='card-img-top' alt='...'>";
+        echo "<a class='tingeling' href='single_Book.php?bookID={$row['book_id']}'><img src='uploads/{$row['book_img']}' class='card-img-top' alt='Bok pärmbild'>";
         echo "<div class='card-body'>";
         echo "<h5 class='card-title'>{$row['book_title']}</h5></a>";
         echo "<p class='card-text'></p>";
@@ -95,10 +101,42 @@ else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
     }
 
 	echo "</div>";
-    ?>
+    echo "</div>";
+    echo "<div>";
+    echo "<div id='wearebest' class='container'>";
+    echo "<div class='row'>";
+    echo "<div class='col-6'>";
+    echo "<img id='pfppic' src='images/60111.jpg' alt='Bild på företages logo'>";
+    echo "</div>";
+    echo "<div class='col-6'>";
+    echo "<h4>Vi är bäst</h4>";
+    echo "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>";
+    echo "</div>";
+    echo "</div>";
+    echo "</div>";
+    echo "</div>";
+
+
+    echo "<div id='contactinfo' class='container'>";
+    echo "<div class='row'>";
+    echo "<div class='col-6'>";
+    echo "<h3>Kontaktuppgifter</h3>";
+    echo "<p>Telefon: 040 2587932</p>";
+    echo "<p>E-post: Bokhandel@gmail.com</p>";
+    echo "<p>Adress: Bokhandelvägen 17</p>";
+    echo "</div>";
+    echo "<div class='col-6'>";
+    echo "<img id='pfppic' src='images/221350-P1JPTN-142.jpg' alt='Bild på företages logo'>";
+    echo "</div>";
+    echo "</div>";
+    
+    
+
+    /* Filter */?>
+    
     <div class="sidebar pt-3 col-sm-4 bg-light">
 	<div class="sidebar pt-3 col-sm-4 bg-light">
-    <form action="" method="GET" id="sortform">
+    <form action="" method="GET" id="filterform">
     
         <label for="filterlanguage">Filtrera med language:</label>
         	<select name="filterlanguage" id="filterlanguage">
@@ -134,6 +172,14 @@ else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
 		    </select> <br>
 			<input id="filter" type="submit" name="filter-submit" value="Filter"><br>
 	</form><br>
+
+	
+
+
+
+
+
+
 
 	<form action="" method="GET" id="sortform">
 		<label for="sortprice">Sortera Pris:</label>

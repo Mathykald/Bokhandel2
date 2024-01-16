@@ -44,7 +44,7 @@ else{
 <div id="formcss">
 <form method="post" action="" enctype="multipart/form-data">
 
-	<h3 id="center">Create book</h3>
+	<h3 id="center">Skapa bok</h3>
 
   <label id="mt" for="book_title">Title:</label><br>
   <input class="colorstuff" type="text" id="book_title" name="book_title" value=""><br><br>

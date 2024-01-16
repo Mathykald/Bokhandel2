@@ -38,14 +38,14 @@ else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
 else {
 	$selectedBooks = selectBooks($conn);
 	}
-
+	echo "<div class='container'>";
 	echo "<div class='row'>";
 
 
     foreach ($selectedBooks as $row){
         
     echo "
-	<div id='bksomelese'class='card m-3 col-sm-3'>
+	<div id='bksomelese'class='card m-2 col-sm-2'>
 		<img src='uploads/{$row['book_img']}' class='card-img-top' alt'...'>
 		<div class='card-body'>
 		<h5 class'card-title'>{$row['book_title']}</h5>
@@ -54,16 +54,16 @@ else {
 			<p>{$row['book_description']}</p>
             <p>{$row['book_price']}€</p>
             <p>Sidor: {$row['book_pages']}</p>
-			 <a href='single_Book.php?bookID={$row['book_id']}'>View full info</a>
-				<a href='edit_book.php?bookID={$row['book_id']}'>Edit book info</a>
-				<a href='deletebook.php?bookID={$row['book_id']}'>Delete book</a>
+			 <a href='single_Book.php?bookID={$row['book_id']}'>Se all info</a>
+				<a href='edit_book.php?bookID={$row['book_id']}'>Editera bok info</a>
+				<a href='deletebook.php?bookID={$row['book_id']}'>Radera bok</a>
 
 			 
 		</div>
 		";
 }
 echo "</div>";
-	
+echo "</div>";
 
 ?>
 

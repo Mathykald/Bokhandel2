@@ -23,7 +23,7 @@ if ($user->checkLoginStatus()) {
 
         // You might want to handle the case where 'uid' is not set according to your application's logic.
         // For example, redirect to an error page or display an error message.
-		echo "userToEdit: " . $userToEdit . "<br>";
+		
     }
 }
 
@@ -95,22 +95,22 @@ if(isset($feedback)){
 		}
 	?>
 	
-	<h2> Change account info </h2>
-	<form method="POST" action="">
-	<label for="username">Username</label><br>
+	<h2> Ändra konto info </h2>
+	<form method="POST" class="mb-3" action="">
+	<label for="username">Användarnamn</label><br>
 	  <input type="text" id="username" name="username" value="<?php echo $userInfo['u_username']; ?>" disabled><br>
-	  <label for="password">Password</label><br>
+	  <label for="password">Lösenord</label><br>
 	  <input type="password" id="password"name="password" ><br>
-	  <label for="password-repeat">Password (repeat)</label><br>
+	  <label for="password-repeat">Lösenord (upprepa)</label><br>
 	  <input type="password" id="password-repeat" name="password_confirm" ><br>
-	  <label for="firstname ">First name</label><br>
+	  <label for="firstname ">Förnamn</label><br>
 	  <input type="text" id="firstname" name="firstname" value="<?php echo $userInfo['u_firstname']; ?>"><br>
-	  <label for="lastname">Last name</label><br>
+	  <label for="lastname">Efternamn</label><br>
 	  <input type="text" id="lastname" name="lastname" value="<?php echo $userInfo['u_lastname']; ?>"><br>
 	  <label for="email-field">Email</label><br>
-	  <input type="text" id="email-field" name="email-field" value="<?php echo $userInfo['u_email']; ?>">
+	  <input type="text" id="email-field" name="email-field" value="<?php echo $userInfo['u_email']; ?>"><br>
 	  <br>
-	  <input type="submit" name="submit_edit" value="Submit new info">
+	  <input type="submit" name="submit_edit" value="Ange ny info"><br>
 	</form>
 	
 	<?php 
@@ -119,7 +119,7 @@ if(isset($feedback)){
 	
 	<form method="POST" action="">
 		<select name="update_status">
-			<option value='0'>Change user status</option>
+			<option value='0'>Ändra användar status</option>
 			<?php 
 			foreach ($statusInfo as $row){
 			echo "<option value='{$row['s_id']}'>{$row['s_name']}</option>" ;
@@ -127,16 +127,16 @@ if(isset($feedback)){
 			?>
 		</select>
 		<select name="update_role">
-		<option value='0'>Change user role</option>
+		<option value='0'>Ändra användar roll</option>
 			<?php foreach ($roleInfo as $row){
 			echo "<option value='{$row['r_ID']}'>{$row['r_name']}</option>" ;
 			} ?>
-		</select>
-	  <input type="submit" name="submit_role_status" value="Update">
-	</form>
+		</select><br>
+	  <input type="submit" name="submit_role_status" value="Uppdatera">
+	</form><br>
 	
 	<form method="POST" action="confirm_delete.php?userToEdit=<?php echo $userToEdit; ?>">
-	  <input type="submit" name="submit_user_delete" value="Delete this account">
+	  <input type="submit" name="submit_user_delete" value="Radera konto">
 	</form>
 	
 <?php } ?>

@@ -4,7 +4,7 @@
 ?>
 
 <div class="bc">
-
+<h2 class="my-5">All böcker</h2>
 <?php
 $allBooks = selectAllBooks($conn);
 
@@ -25,14 +25,14 @@ else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
 else {
 	$everyBook = everyBook($conn);
 	}
-
+	echo "<div class='container'>";
 	echo "<div class='row'>";
 
 
     foreach ($everyBook as $row){
 
     echo "
-	<div id='bksomelese'class='card m-3 col-sm-3'>
+	<div id='bksomelese'class='card m-2 col-sm-2'>
 		<img src='uploads/{$row['book_img']}' class='card-img-top' alt'...'>
 		<div class='card-body'>
 		<h5 class'card-title'>{$row['book_title']}</h5>
@@ -41,29 +41,31 @@ else {
 			<p>{$row['book_description']}</p>
             <p>{$row['book_price']}€</p>
             <p>Sidor: {$row['book_pages']}</p>
-			 <a href='single_Book.php?bookID={$row['book_id']}'>View full info</a>
+			 <a href='single_Book.php?bookID={$row['book_id']}'>Se all info</a>
 		</div>
 		";
 }
 echo "</div>";
-	
+echo "</div>";
 
 ?>
 
-<div class="sidebar pt-3 col-sm-4 bg-light">
-    <form action="" method="GET" id="sortform">
-        <label for="sortprice">Sortera:</label>
-        <select name="sortprice" id="sortprice" onchange="submitSortForm()">
-            <option value="0">Choose..</option>
-            <option value="1">Billigaste-Dyrast</option>
-            <option value="2">Dyraste-Billigast</option>
-        </select> <br><br>
-        <label for="sortpages">Sortera:</label>
-        <select name="sortpages" id="sortpages" onchange="submitSortForm()">
+<form action="" method="GET" id="sortform">
+		<label for="sortprice">Sortera Pris:</label>
+        <select name="sortprice" id="sortprice">
+        	<option value="0">Choose..</option>
+        	<option value="1">Billigaste-Dyrast</option>
+          	<option value="2">Dyraste-Billigast</option>
+    	</select> <br>
+        <label for="sortpages">Sortera Sidantal:</label>
+        <select name="sortpages" id="sortpages">
             <option value="0">Choose..</option>
             <option value="1">Lägsta sidantal</option>
             <option value="2">Högsta sidantal</option>
-        </select> <br>
+        </select>
+		<input id="Sort" type="submit" name="sort-submit" value="Sort"><br>
+
+	</form>
     
 
     

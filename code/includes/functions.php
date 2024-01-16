@@ -198,15 +198,18 @@ function selectFilteredBooks($conn, $languageId, $categoryId, $genreId){
                 INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
                 WHERE book_status_fk = 1';
     
-            if ($sortCriteria == "book_price" || $sortCriteria == "book_pages") {
-                $sql_query .= " ORDER BY $sortCriteria";
-            }
+                if ($sortCriteria == "book_price" || $sortCriteria == "book_pages") {
+                    $sql_query .= " ORDER BY $sortCriteria";
+                
+                    // Append the sorting direction
+                    if ($direction == 2) {
+                        $sql_query .= ' DESC';
+                    } elseif ($direction == 1) {
+                        $sql_query .= ' ASC';
+                    }
+                }
     
-            if ($direction == 1) {
-                $sql_query .= ' ASC';
-            } else if ($direction == 2) {
-                $sql_query .= ' DESC';
-            }
+        
     
             // Prepare the statement
             $stmt = $conn->prepare($sql_query);

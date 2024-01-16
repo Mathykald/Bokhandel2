@@ -25,16 +25,15 @@ if(isset($_POST['searchuser_submit'])){
 </div>
 <div class="content-inner">
 	<?php 
-	echo "<h2>Välkommen " . $_SESSION["uname"] . "</h2>"; 
-	echo "<h3>Du har användarroll " . $_SESSION["urole"] . " och din id är " .$_SESSION["uid"]."</h3>"; 
+	echo "<h3>Välkommen " . $_SESSION["uname"] . "</h2>";  
 	
 	?>
 
 	<form method="POST" action="">
-		<label for="searchinput">Search for user to edit</label><br>
-		  <input type="text" id="searchinput" name="search_username" placeholder="Enter username here"><br>
-		  <br>
-		  <input type="submit" name="searchuser_submit" value="Search">
+		<label for="searchinput">Sök efter användare</label><br>
+		  <input type="text" id="searchinput" name="search_username" placeholder="Ange användarnamn här">
+		  
+		  <input type="submit" name="searchuser_submit" class="mb-4" value="Sök">
 	</form>
 
 	<div class="userlist">

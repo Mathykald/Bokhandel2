@@ -20,16 +20,24 @@ else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
 	$selectedBooks = selectSortedBooks($conn, $sortCriteria, $sortDirection);
 }
 
+$displayBooks = !empty($filteredBooks) ? $filteredBooks : everyBook($conn);
 
+if (isset($_GET['filter-submit'])) {
+    $languageId = $_GET['filterlanguage'];
+    $categoryId = $_GET['filtercateogry'];
+    $genreId = $_GET['filtergenre'];
+
+    $filteredBooks = selectFilteredBooks($conn, $languageId, $categoryId, $genreId);
+}
 
 else {
-	$everyBook = everyBook($conn);
+	$displayBooks = everyBook($conn);
 	}
 	echo "<div class='container'>";
 	echo "<div class='row'>";
 
 
-    foreach ($everyBook as $row){
+    foreach ($displayBooks as $row){
 
     echo "
 	<div id='bksomelese'class='card m-2 col-sm-2'>
@@ -50,7 +58,54 @@ echo "</div>";
 
 ?>
 
-<form action="" method="GET" id="sortform">
+<div class="sidebar pt-3 col-sm-4 bg-light">
+	<div class="sidebar pt-3 col-sm-4 bg-light">
+    <form action="" method="GET" id="filterform">
+    
+        <label for="filterlanguage">Filtrera med language:</label>
+        	<select name="filterlanguage" id="filterlanguage">
+    	        <option value="0">Choose..</option>
+	                <?php
+                        $allBooks = fetchlanguages($conn);
+				        foreach($allBooks as $row){
+						    echo "<option value='{$row['lang_id']}'>{$row['lang_language']}</option>";
+                        }
+                    ?>
+	        </select><br>
+         
+        <label for="filtercateogry">Filtrera med Kategori</label>
+			<select name="filtercateogry" id="filtercateogry">
+				<option value="0">Choose..</option>
+                	<?php
+            	        $allBooks = fetchCategories($conn);
+				        foreach($allBooks as $row){
+						    echo "<option value='{$row['category_id']}'>{$row['category_name']}</option>";
+						}
+                    ?>
+			</select><br>
+
+		<label for="filtergenre">Filtrera med genre</label>
+			<select name="filtergenre" id="filtergenre">
+				<option value="0">Choose..</option>
+	                <?php
+	                    $allBooks = fetchgenre($conn);
+	                    foreach ($allBooks as $row){
+			                echo "<option value='{$row['genre_id']}'>{$row['genre_name']}</option>";
+	                   }
+                    ?>
+		    </select> <br>
+			<input id="filter2" type="submit" name="filter-submit" value="Filter"><br>
+	</form><br>
+
+	
+
+
+
+
+
+
+
+	<form action="" method="GET" id="sortform">
 		<label for="sortprice">Sortera Pris:</label>
         <select name="sortprice" id="sortprice">
         	<option value="0">Choose..</option>
@@ -65,54 +120,6 @@ echo "</div>";
         </select>
 		<input id="Sort" type="submit" name="sort-submit" value="Sort"><br>
 
-	</form>
-    
-
-    
-        <label for="filterlanguage">Filtrera med language:</label>
-                    <select name="filterlanguage" id="filterlanguage" onchange="submitFilterForm()">
-                    <option value="0">Choose..</option>
-                        <?php
-                            $allBooks = fetchlanguages($conn);
-					        foreach($allBooks as $row){
-						    echo "<option value='{$row['lang_id']}'>{$row['lang_language']}</option>";
-                            }
-                        ?>
-			        </select><br>
-
-
-
-                        
-                <label for="filtercateogry">Filtrera med Kategori</label>
-					<select name="filtercateogry" id="filtercateogry" onchange="submitFilterForm()">
-					<option value="0">Choose..</option>
-                        <?php
-                            $allBooks = fetchCategories($conn);
-					        foreach($allBooks as $row){
-						    echo "<option value='{$row['category_id']}'>{$row['category_name']}</option>";
-					}
-                    ?>
-				</select> <br>
-
-
-
-
-            
-				<label for="filtergenre">Filtrera med genre</label>
-					<select name="filtergenre" id="filtergenre" onchange="submitFilterForm()">
-					<option value="0">Choose..</option>
-                        <?php
-		                    $allBooks = fetchgenre($conn);
-		                    foreach ($allBooks as $row){
-			                echo "<option value='{$row['genre_id']}'>{$row['genre_name']}</option>";
-		                    }
-	                    ?>
-				    </select> <br>
-
-
-
-
-</select>
 	</form>
 </div>
 

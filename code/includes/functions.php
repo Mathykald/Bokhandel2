@@ -64,8 +64,6 @@ if (!function_exists('createBook')) {
 		$stmt_insertBook->bindParam(':release_date', $release_date, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':status_name', $status_name, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':uid', $uid, PDO::PARAM_STR);
-		echo "Book Genre ID: " . $book_genre;
-		echo "Book title ID: " . $book_illustrator;
 		$stmt_insertBook->execute();
 	}
 }
@@ -198,6 +196,11 @@ function selectFilteredBooks($conn, $languageId, $categoryId, $genreId){
                 INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
                 WHERE book_status_fk = 1';
     
+                // Add condition for the current month
+                if ($currentMonthOnly) {
+                    $sql_query .= " AND MONTH(book_table.release_date) = MONTH(CURRENT_DATE()) AND YEAR(book_table.release_date) = YEAR(CURRENT_DATE())";
+                }
+
                 if ($sortCriteria == "book_price" || $sortCriteria == "book_pages") {
                     $sql_query .= " ORDER BY $sortCriteria";
                 
@@ -343,26 +346,31 @@ if (!function_exists('everyBook')) {
     }
 }
 
+if (!function_exists('newBooks')) {
+    function newBooks($conn, $currentMonthOnly = false)
+    {
 
-if (!function_exists('selectBookbook')) {
-	function selectBookbook($conn, $id){
-		$selectedBook = $conn->prepare(
-		'SELECT *
-            FROM book_table
-            INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
-            INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
-            INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
-            INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
-            INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
-            INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id'
-		);
-		$selectedBooks->bindParam(':id', $id, PDO::PARAM_INT);
-		$selectedBooks->execute();
-		$bookData = $selectedBooks->fetch();
-		
-		return $bookData;
-	}
+        $sql = 'SELECT *
+                FROM book_table
+                INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
+                INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
+                INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
+                INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
+                INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
+                INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
+                WHERE book_status_fk = 1 ';
+
+        if ($currentMonthOnly) {
+            $sql .= " AND MONTH(book_table.release_date) = MONTH(CURRENT_DATE()) AND YEAR(book_table.release_date) = YEAR(CURRENT_DATE())";
+        }
+        $everyBook = $conn->prepare($sql);
+        $everyBook->execute();
+
+        return $everyBook;
+    }
 }
+
+
 
 if (!function_exists('deleteBook')) {
 function deleteBook($conn, $book){

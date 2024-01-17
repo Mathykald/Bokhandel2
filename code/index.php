@@ -10,7 +10,7 @@ if (isset($_GET['sort-submit'])) {
     // Check if $sortPrice or $sortPages has a valid value
     if (($sortPrice == 1 || $sortPrice == 2) && ($sortPages == 1 || $sortPages == 2)) {
         // Call the selectSortedBooks function
-        $sortedBooks = selectSortedBooks($conn, $sortPrice, $sortPages);
+        $sortedBooks = selectSortedBooks($conn, $sortPrice, $sortPages, true);
     } else {
         // Handle invalid values or show an error message
         echo "Invalid sorting criteria or direction.";
@@ -56,7 +56,7 @@ if(isset($_POST['searchbook_submit'])){
 }
 
 $displayBooks = !empty($filteredBooks) ? $filteredBooks : everyBook($conn);
-
+$newBooks = newBooks($conn, true);
 
 
 /*if(isset($_GET['sortprice']) && $_GET['sortprice'] != 0){
@@ -80,7 +80,27 @@ else if(isset($_GET['sortpages']) && $_GET['sortpages'] != 0){
     echo "<div class='container'>";
     echo "<h3>Populära kategorier</h3>";
     echo "<h3>Nya böcker</h3>";
-    echo "<h3>Featured böcker</h3>";
+    echo "<div class='row'>";
+    foreach ($newBooks as $row) {
+        echo "<div id='bksomelese' class='card m-3 col-sm-2'>";
+        echo "<a class='tingeling' href='single_Book.php?bookID={$row['book_id']}'><img src='uploads/{$row['book_img']}' class='card-img-top' alt='Bok pärmbild'>";
+        echo "<div class='card-body'>";
+        echo "<h5 class='card-title'>{$row['book_title']}</h5></a>";
+        echo "<p class='card-text'></p>";
+        echo "</div>";
+        echo "<p>{$row['book_description']}</p>";
+        echo "<p>{$row['book_price']}€</p>";
+        echo "<p>Sidor: {$row['book_pages']}</p>";
+        echo "<a class='tingeling' href='single_Book.php?bookID={$row['book_id']}'>View full info</a>";
+        echo "</div>";
+    }
+
+    if (empty($newBooks)) {
+        echo "<p>No matching books found.</p>";
+    }
+
+	echo "</div>";
+    echo "<h3>Utvalda böcker</h3>";
 	echo "<div class='row'>";
     foreach ($displayBooks as $row) {
         echo "<div id='bksomelese' class='card m-3 col-sm-2'>";

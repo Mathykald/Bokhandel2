@@ -35,8 +35,6 @@ else{
     $_FILES['bimage']['name'], $_POST['book_language'], $_POST['book_agerec'], $_POST['book_publish'], 
     $_POST['book_category'], $_POST['release_date'], $_POST['status_name'], $_POST['uid']);	
 	  
-	 // echo $_post['firstname'];
-	 // echo $files['bimage'] ['name'];
 	 
   }
   ?>

@@ -32,7 +32,9 @@
 echo "Vill du ta bort " . $bookData['book_title'] . " av " . $bookData['author_firstname'] . "?";
 ?>
 
-<form method="POST" action="">    <input type="submit" name="deletebook" value="Ta bort">    <input type="submit" name="goback" value="Tillbaka"></form>
+<form method="POST" action="">    
+	<input type="submit" name="deletebook" value="Ta bort">    
+	<input type="submit" name="goback" value="Tillbaka"></form>
 
 
 </div>

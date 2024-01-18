@@ -3,7 +3,7 @@
 <?php
 include 'includes/config.php';
 include 'header.php';
-
+var_dump($_POST);
 if($user->checkLoginStatus()){
   if(!$user->checkLoginStatus(true)){
       $user->redirect("create_book.php");
@@ -29,18 +29,21 @@ else{
   if(isset($_POST['article-submit'])){
 	  
     //$lastInsertedCustomerId = fetchCreator($conn, $_POST['firstname'], $_POST['lastname']);
-
-    createBook($conn, $_POST['book_title'], $_POST['book_price'], $_POST['book_rating'], $_POST['book_author'], 
-    $_POST['book_illustrator'], $_POST['book_description'], $_POST['book_genre'], $_POST['book_pages'], 
-    $_FILES['bimage']['name'], $_POST['book_language'], $_POST['book_agerec'], $_POST['book_publish'], 
-    $_POST['book_category'], $_POST['release_date'], $_POST['status_name'], $_POST['uid']);	
-	  
+    if ($_POST['featured_book'] !== '0') {
+      createBook($conn, $_POST['book_title'], $_POST['book_price'], $_POST['book_rating'], $_POST['book_author'], 
+      $_POST['book_illustrator'], $_POST['book_description'], $_POST['book_genre'], $_POST['book_pages'], 
+      $_FILES['bimage']['name'], $_POST['book_language'], $_POST['book_agerec'], $_POST['book_publish'], 
+      $_POST['book_category'], $_POST['release_date'], $_POST['featured_book'], $_POST['status_name'], $_POST['uid']);	
+  } else {
+      echo "Please select a featured book.";
+  }
+  
 	 
   }
   ?>
 <div id="wholeting">
 <div id="formcss">
-<form method="post" action="" enctype="multipart/form-data">
+<form method="post" action="create_book.php" enctype="multipart/form-data">
 
 	<h3 id="center">Skapa bok</h3>
 
@@ -167,7 +170,17 @@ else{
   <input class="colorstuff" type="date" id="release_date" name="release_date" value=""><br><br>
 
 
-</p>
+  <select name="featured_book" id="featured_book" class="featured_book required" >
+    <option value="">Välj om utvald</option>
+      <?php
+		    $allFeatured = fetchFeatured($conn);
+		    foreach ($allFeatured as $row){
+			  echo "<option value='{$row['featured_id']}'>{$row['featured_book']}</option>";
+		    }
+	    ?>
+  </select>
+
+
 <select name="status_name" class="status_name">
   <option value="1">Finns i lager</option>
   <option value="2">Finns inte i lager</option>

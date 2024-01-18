@@ -81,19 +81,23 @@ input {
 
 #bksomelese{
 	box-shadow: rgba(2, 2, 2, 0.2) 0px 7px 29px 0px;
-	background-color: lightgrey;
 	padding: 0px;
 }
 
 #bksomelese2{
 	box-shadow: rgba(2, 2, 2, 0.2) 0px 7px 29px 0px;
-	background-color: lightgrey;
+	padding: 0px;
+}
+
+.bksomelese3{
+	box-shadow: rgba(2, 2, 2, 0.2) 0px 7px 29px 0px;
+	
 	padding: 0px;
 }
 
 a:hover {
 	cursor: pointer;
-	background-color: black;
+	
  }
 
  #livesearchthings {
@@ -122,5 +126,17 @@ a:hover {
 }
 
 #contactinfo {
-	margin-top: 70px;
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+#wearebest {
+	padding-top: 50px;
+	padding-bottom: 50px;
+	width: 100%;
+	background-color: antiquewhite;
+}
+
+p {
+	font-weight: 500;
 }

@@ -8,7 +8,7 @@ include_once 'includes/functions.php';
 
 if(isset($_POST['create-category'])){
 	  
-      $insertedCategoryId = createCategory($conn, $_POST['category_name']);
+      $insertedCategoryId = createCategory($conn, $_POST['category_name'], $_FILES['category_img']['name']);
       
        
       // echo $_post['firstname'];
@@ -21,6 +21,9 @@ if(isset($_POST['create-category'])){
 
   <label id="mt" for="category_name">Category:</label><br>
   <input class="colorstuff" type="text" id="category_name" name="category_name" value=""><br><br>
+  
+  <label for="category_img">Bild:</label><br>
+	<input type="file" name="category_img" id="category_img">
 
   <input id="submit" type="submit" name="create-category" value="Send">
 </form>

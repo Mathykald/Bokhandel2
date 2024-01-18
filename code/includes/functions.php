@@ -38,16 +38,21 @@ function createPublish($conn, $publish_name ){
 }
 }
 if (!function_exists('createBook')) {
-	function createBook($conn, $book_title, $book_price, $book_rating, $book_author, $book_illustrator, $book_description, $book_genre, $book_pages, $book_img, $book_language, $book_agerec, $book_publish, $book_category, $release_date, $status_name, $uid){
-		$uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : null;
+	function createBook($conn, $book_title, $book_price, $book_rating, $book_author, $book_illustrator, $book_description, $book_genre, $book_pages, $book_img, $book_language, $book_agerec, $book_publish, $book_category, $release_date, $featured_book, $status_name, $uid){
+        try {
+            // Validate that a featured book is selected
+            if (empty($featuredId)) {
+                throw new Exception("Please select a featured book.");
+            }
+        $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : null;
 		$stmt_insertBook = $conn->prepare("INSERT INTO book_table (book_title, book_price, book_rating, book_author_fk, book_illustrator_fk, book_description, 
 		book_genre_fk, book_pages, book_img, book_lang_fk, 
 		book_agerec_fk, book_publish_fk, book_category_fk, 
-		release_date, book_status_fk, book_user_fk)
+		release_date, book_featured_fk, book_status_fk, book_user_fk)
 		VALUES (:book_title, :book_price, :book_rating, :book_author, :book_illustrator, :book_description, 
 		:book_genre, :book_pages, :book_img, :book_language, 
 		:book_agerec, :book_publish, :book_category, 
-		:release_date, :status_name, :uid )");
+		:release_date, :featured_book, :status_name, :uid )");
 		$stmt_insertBook->bindParam(':book_title', $book_title, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':book_price', $book_price, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':book_rating', $book_rating, PDO::PARAM_STR);
@@ -62,9 +67,13 @@ if (!function_exists('createBook')) {
 		$stmt_insertBook->bindParam(':book_publish', $book_publish, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':book_category', $book_category, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':release_date', $release_date, PDO::PARAM_STR);
+        $stmt_insertBook->bindParam(':featured_book', $featured_book, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':status_name', $status_name, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':uid', $uid, PDO::PARAM_STR);
 		$stmt_insertBook->execute();
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
 	}
 }
 
@@ -91,7 +100,7 @@ if (!function_exists('updateBook')) {
             book_agerec_fk = :book_agerec, 
             book_publish_fk = :book_publish, 
             book_category_fk = :book_category,
-            release_date = :release_date, 
+            release_date = :release_date,  
             book_status_fk = :status_name 
             WHERE book_id = :bid");
 
@@ -227,10 +236,11 @@ function selectFilteredBooks($conn, $languageId, $categoryId, $genreId){
 
     
 if (!function_exists('createCategory')) {
-	function createCategory($conn, $category_name){
+	function createCategory($conn, $category_name, $category_img){
 		
-		$stmt_insertCategory = $conn->prepare("INSERT INTO category_table (category_name) VALUES (:category_name)");
+		$stmt_insertCategory = $conn->prepare("INSERT INTO category_table (category_name, category_img) VALUES (:category_name, :category_img)");
 		$stmt_insertCategory->bindParam(':category_name', $category_name, PDO::PARAM_STR);
+        $stmt_insertCategory->bindParam(':category_img', $category_img, PDO::PARAM_STR);
 		$stmt_insertCategory->execute();
 		
 		$insertCategoryId = $conn->lastInsertId();
@@ -253,6 +263,12 @@ if (!function_exists('fetchCategories')) {
 	function fetchCategories($conn){
 		$selectedCategories = $conn->query("SELECT * FROM category_table");
 		return $selectedCategories;
+	}
+}
+if (!function_exists('fetchFeatured')) {
+	function fetchFeatured($conn){
+		$selectedFeatured = $conn->query("SELECT * FROM featured_table");
+		return $selectedFeatured;
 	}
 }
 if (!function_exists('fetchillustrators')) {
@@ -369,6 +385,8 @@ if (!function_exists('newBooks')) {
         return $everyBook;
     }
 }
+
+
 
 
 

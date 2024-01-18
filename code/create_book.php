@@ -3,7 +3,6 @@
 <?php
 include 'includes/config.php';
 include 'header.php';
-var_dump($_POST);
 if($user->checkLoginStatus()){
   if(!$user->checkLoginStatus(true)){
       $user->redirect("create_book.php");
@@ -29,17 +28,13 @@ else{
   if(isset($_POST['article-submit'])){
 	  
     //$lastInsertedCustomerId = fetchCreator($conn, $_POST['firstname'], $_POST['lastname']);
-    if ($_POST['featured_book'] !== '0') {
+   
       createBook($conn, $_POST['book_title'], $_POST['book_price'], $_POST['book_rating'], $_POST['book_author'], 
       $_POST['book_illustrator'], $_POST['book_description'], $_POST['book_genre'], $_POST['book_pages'], 
       $_FILES['bimage']['name'], $_POST['book_language'], $_POST['book_agerec'], $_POST['book_publish'], 
-      $_POST['book_category'], $_POST['release_date'], $_POST['featured_book'], $_POST['status_name'], $_POST['uid']);	
-  } else {
-      echo "Please select a featured book.";
+      $_POST['book_category'], $_POST['release_date'], $_POST['status_name'], $_POST['uid']);	
   }
-  
-	 
-  }
+
   ?>
 <div id="wholeting">
 <div id="formcss">
@@ -170,15 +165,15 @@ else{
   <input class="colorstuff" type="date" id="release_date" name="release_date" value=""><br><br>
 
 
-  <select name="featured_book" id="featured_book" class="featured_book required" >
+  <!-- <select name="featured_book" id="featured_book" class="featured_book required" >
     <option value="">Välj om utvald</option>
-      <?php
-		    $allFeatured = fetchFeatured($conn);
-		    foreach ($allFeatured as $row){
-			  echo "<option value='{$row['featured_id']}'>{$row['featured_book']}</option>";
-		    }
-	    ?>
-  </select>
+      // <?php
+		    // $allFeatured = fetchFeatured($conn);
+		    // foreach ($allFeatured as $row){
+			  // echo "<option value='{$row['featured_id']}'>{$row['featured_book']}</option>";
+		    // }
+	    // ?>
+  </select> -->
 
 
 <select name="status_name" class="status_name">

@@ -5,6 +5,21 @@
 
 <div class="bc">
 <h2 class="my-5">All böcker</h2>
+
+<?php
+	if($user->checkLoginStatus()){
+	if($user->checkUserRole(50)){
+        ?>
+          <a class="tingeling" aria-current="page" href="edit_categories.php" >Editera kategorier</a>
+		  <a class="tingeling" aria-current="page" href="edit_genre.php" >Editera genrer</a><br>
+		  <a class="tingeling" aria-current="page" href="edit_author.php" >Editera författare</a>
+		  <a class="tingeling" aria-current="page" href="edit_illustrator.php" >Editera illustratörer</a><br>
+		  <a class="tingeling" aria-current="page" href="edit_publish.php" >Editera förlag</a>
+		  <a class="tingeling" aria-current="page" href="edit_agerec.php" >Editera åldersrekommendation</a>
+        <?php
+		}
+		}
+        ?>
 <?php
 $allBooks = selectAllBooks($conn);
 
@@ -93,11 +108,16 @@ $newBooks = newBooks($conn, true);
 		<h5 class'card-title'>{$row['book_title']}</h5><br>
 		<p>Pris: {$row['book_price']}€</p>
 		<p class='card-text'>Sidor: {$row['book_pages']}<p>
-		<a class='tingeling mb-3' href='single_Book.php?bookID={$row['book_id']}'>Se all info</a>";
+		<a class='tingeling mb-3' href='single_Book.php?bookID={$row['book_id']}'>Se all info</a><br>";
 		 
 			if($user->checkLoginStatus()){
 			if($user->checkUserRole(50)){
-		echo "<a class='tingeling mb-3'href='edit_book.php?bookID={$row['book_id']}'>Edit book</a>";
+		echo "<a class='tingeling mb-3'href='edit_book.php?bookID={$row['book_id']}'>Edit book</a><br>";
+			}
+			}
+			if($user->checkLoginStatus()){
+			if($user->checkUserRole(50)){
+		echo "<a class='tingeling mb-3'href='deletebook.php?bookID={$row['book_id']}'>Radera bok</a>";
 			}
 			}
 		echo "</div>";

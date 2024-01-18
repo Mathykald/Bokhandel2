@@ -161,7 +161,7 @@ $everyBook = everybook($conn);
     }
 // Error meddelande ifall det inte finns böcker
     if (empty($featuredBooks)) {
-        echo "<p>No matching books found.</p>";
+        
     }
 
 	echo "</div>";

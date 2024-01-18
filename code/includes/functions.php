@@ -38,21 +38,17 @@ function createPublish($conn, $publish_name ){
 }
 }
 if (!function_exists('createBook')) {
-	function createBook($conn, $book_title, $book_price, $book_rating, $book_author, $book_illustrator, $book_description, $book_genre, $book_pages, $book_img, $book_language, $book_agerec, $book_publish, $book_category, $release_date, $featured_book, $status_name, $uid){
-        try {
-            // Validate that a featured book is selected
-            if (empty($featuredId)) {
-                throw new Exception("Please select a featured book.");
-            }
+	function createBook($conn, $book_title, $book_price, $book_rating, $book_author, $book_illustrator, $book_description, $book_genre, $book_pages, $book_img, $book_language, $book_agerec, $book_publish, $book_category, $release_date, $status_name, $uid){
+
         $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : null;
 		$stmt_insertBook = $conn->prepare("INSERT INTO book_table (book_title, book_price, book_rating, book_author_fk, book_illustrator_fk, book_description, 
 		book_genre_fk, book_pages, book_img, book_lang_fk, 
 		book_agerec_fk, book_publish_fk, book_category_fk, 
-		release_date, book_featured_fk, book_status_fk, book_user_fk)
+		release_date, book_status_fk, book_user_fk)
 		VALUES (:book_title, :book_price, :book_rating, :book_author, :book_illustrator, :book_description, 
 		:book_genre, :book_pages, :book_img, :book_language, 
 		:book_agerec, :book_publish, :book_category, 
-		:release_date, :featured_book, :status_name, :uid )");
+		:release_date, :status_name, :uid )");
 		$stmt_insertBook->bindParam(':book_title', $book_title, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':book_price', $book_price, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':book_rating', $book_rating, PDO::PARAM_STR);
@@ -67,15 +63,12 @@ if (!function_exists('createBook')) {
 		$stmt_insertBook->bindParam(':book_publish', $book_publish, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':book_category', $book_category, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':release_date', $release_date, PDO::PARAM_STR);
-        $stmt_insertBook->bindParam(':featured_book', $featured_book, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':status_name', $status_name, PDO::PARAM_STR);
 		$stmt_insertBook->bindParam(':uid', $uid, PDO::PARAM_STR);
 		$stmt_insertBook->execute();
-    } catch (Exception $e) {
-        echo "Error: " . $e->getMessage();
-    }
+    } 
 	}
-}
+
 
 
 if (!function_exists('updateBook')) {
@@ -124,6 +117,22 @@ if (!function_exists('updateBook')) {
         $stmt_insertBook->execute();
 
         return $bid;
+    }
+}
+
+if (!function_exists('updateCategory')) {
+    function updateCategory($conn, $cid, $category_name ){
+
+        $stmt_insertCategory = $conn->prepare("UPDATE category_table SET 
+            category_name = :category_name, 
+            WHERE category_id = :cid");
+
+								
+        $stmt_insertCategory->bindParam(':cid', $cid, PDO::PARAM_INT);
+        $stmt_insertCategory->bindParam(':category_name', $category_name, PDO::PARAM_STR);
+        $stmt_insertCategory->execute();
+
+        return $cid;
     }
 }
 
@@ -255,8 +264,8 @@ if (!function_exists('fetchAuthors')) {
 }
 if (!function_exists('fetchCreator')) {
 	function fetchCreator($conn){
-		$selectedAuthors = $conn->query("SELECT * FROM user_table");
-		return $selectedAuthors;
+		$selectedCreator = $conn->query("SELECT * FROM user_table");
+		return $selectedCreator;
 	}
 }
 if (!function_exists('fetchCategories')) {
@@ -343,7 +352,6 @@ if (!function_exists('selectBooks')) {
 if (!function_exists('everyBook')) {
     function everyBook($conn)
     {
-        // Assuming you have a session variable 'uid' to use in the query
 
         $sql = 'SELECT *
                 FROM book_table
@@ -359,6 +367,27 @@ if (!function_exists('everyBook')) {
         $everyBook->execute();
 
         return $everyBook;
+    }
+}
+
+if (!function_exists('everycategory')) {
+    function everycategory($conn)
+    {
+
+        $sql = 'SELECT *
+                FROM book_table
+                INNER JOIN agerec_table ON book_table.book_agerec_fk = agerec_table.agerec_id 
+                INNER JOIN author_table ON book_table.book_author_fk = author_table.author_id 
+                INNER JOIN lang_table ON book_table.book_lang_fk = lang_table.lang_id
+                INNER JOIN publish_table ON book_table.book_publish_fk = publish_table.publish_id
+                INNER JOIN category_table ON book_table.book_category_fk = category_table.category_id
+                INNER JOIN genre_table ON book_table.book_genre_fk = genre_table.genre_id 
+                WHERE book_status_fk = 1 ';
+
+        $everycategory = $conn->prepare($sql);
+        $everycategory->execute();
+
+        return $everycategory;
     }
 }
 
@@ -386,8 +415,19 @@ if (!function_exists('newBooks')) {
     }
 }
 
+if (!function_exists('deleteBook')) {
+function deleteCategory($conn, $category_id) {
+    $deleteCategory = $conn->prepare(
+        'DELETE FROM category_table
+        WHERE category_id = :category_id'
+    );
 
+    $deleteCategory->bindParam(':category_id', $category_id, PDO::PARAM_INT);
 
+    // Execute the deletion and return true if successful, false otherwise
+    return $deleteCategory->execute();
+}
+}
 
 
 if (!function_exists('deleteBook')) {
@@ -420,6 +460,102 @@ if (!function_exists('selectSingleBook')) {
         $bookData = $selectedBook->fetch(PDO::FETCH_ASSOC);
 
         return $bookData;
+    }
+}
+
+if (!function_exists('selectSingleCategory')) {
+    function selectSingleCategory($conn, $cid) {
+        $selectedCategory = $conn->prepare(
+            'SELECT *
+            FROM category_table
+            WHERE category_id = :cid'
+        );
+    
+        $selectedCategory->bindParam(':cid', $cid, PDO::PARAM_INT);
+        $selectedCategory->execute();
+        $categoryData = $selectedCategory->fetch(PDO::FETCH_ASSOC);
+    
+        return $categoryData;
+    }
+}
+
+if (!function_exists('selectSingleGenre')) {
+    function selectSingleGenre($conn, $gid) {
+        $selectedGenre = $conn->prepare(
+            'SELECT *
+            FROM genre_table
+            WHERE genre_id = :gid'
+        );
+    
+        $selectedGenre->bindParam(':gid', $gid, PDO::PARAM_INT);
+        $selectedGenre->execute();
+        $genreData = $selectedGenre->fetch(PDO::FETCH_ASSOC);
+    
+        return $genreData;
+    }
+}
+
+if (!function_exists('selectSingleIllustrator')) {
+    function selectSingleIllustrator($conn, $iid) {
+        $selectedIllustrator = $conn->prepare(
+            'SELECT *
+            FROM illustrator_table
+            WHERE illustrator_id = :iid'
+        );
+    
+        $selectedIllustrator->bindParam(':iid', $iid, PDO::PARAM_INT);
+        $selectedIllustrator->execute();
+        $illustratorData = $selectedIllustrator->fetch(PDO::FETCH_ASSOC);
+    
+        return $illustratorData;
+    }
+}
+
+if (!function_exists('selectSingleAuthor')) {
+    function selectSingleAuthor($conn, $aid) {
+        $selectedAuthors = $conn->prepare(
+            'SELECT *
+            FROM author_table
+            WHERE author_id = :aid'
+        );
+    
+        $selectedAuthors->bindParam(':aid', $aid, PDO::PARAM_INT);
+        $selectedAuthors->execute();
+        $authorData = $selectedAuthors->fetch(PDO::FETCH_ASSOC);
+    
+        return $authorData;
+    }
+}
+
+if (!function_exists('selectSinglePublish')) {
+    function selectSinglePublish($conn, $pid) {
+        $selectedPublish = $conn->prepare(
+            'SELECT *
+            FROM publish_table
+            WHERE publish_id = :pid'
+        );
+    
+        $selectedPublish->bindParam(':pid', $pid, PDO::PARAM_INT);
+        $selectedPublish->execute();
+        $publishData = $selectedPublish->fetch(PDO::FETCH_ASSOC);
+    
+        return $publishData;
+    }
+}
+
+if (!function_exists('selectSingleAgerec')) {
+    function selectSingleAgerec($conn, $agid) {
+        $selectedAgerec = $conn->prepare(
+            'SELECT *
+            FROM agerec_table
+            WHERE agerec_id = :agid'
+        );
+    
+        $selectedAgerec->bindParam(':agid', $agid, PDO::PARAM_INT);
+        $selectedAgerec->execute();
+        $agerecData = $selectedAgerec->fetch(PDO::FETCH_ASSOC);
+    
+        return $agerecData;
     }
 }
 ?>
